@@ -42,6 +42,13 @@ export function createApp() {
   // publics de Twilio, protégés par vérification de signature à la place.
   app.use("/api/twilio", twilioRouter);
 
+  // Aperçu du site public accessible quel que soit le domaine utilisé pour
+  // atteindre ce service (utile pour vérifier le site avant que medy.site
+  // ne soit branché en DNS, par ex. via l'URL Render brute).
+  if (fs.existsSync(publicSiteDir)) {
+    app.use("/apercu-site-public", express.static(publicSiteDir));
+  }
+
   // Un seul service, deux sites distincts selon le domaine de la requête :
   // medy.site (et www.medy.site) reçoit le site public statique
   // (public-site/, localStorage, aucun appel API) ; tout autre host —
