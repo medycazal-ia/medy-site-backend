@@ -185,6 +185,41 @@ carré 640×640 et compressé en JPEG (~47 Ko) avec Pillow (installé dans
 cet environnement, pas de convert/ImageMagick disponible). Stocké en
 `public-site/avatar.jpg`.
 
+**Suite immédiate** : l'utilisateur a jugé l'avatar généré "ne me
+ressemble pas", a demandé un avatar "amusant mais qui me ressemble" —
+j'ai donc demandé une vraie photo de référence pour une édition
+image-à-image (plutôt que régénérer à l'aveugle). L'utilisateur a essayé
+de faire chercher une photo dans Google Photos ("aller chercher celle
+qui te semble la mieux") : aucun connecteur Google Photos disponible
+dans cette session, et l'accès Google Drive a échoué (`Insufficient
+scope`) — pas de moyen de parcourir ses photos moi-même. Il a fini par
+uploader une vraie photo (HEIF, `IMG_1352.heif`, converti en JPEG via
+`pillow-heif`) : lui, chauve, lunettes rondes teintées distinctives,
+barbe/moustache grise courte, sous des fleurs de bougainvillier. Photo
+uploadée sur le flux ElevenLabs (asset_id `uyYXfwtSsPrT7imMxIwE`, node
+`MulawMq2DM1E192mtbMK`, flow `tjqem16O1g9skY4bQEJu`) pour une édition
+`creative_edit_image` — mais **limite quotidienne gratuite de génération
+d'image atteinte** (les 3 générations précédentes de l'avatar "réaliste"
+l'avaient déjà presque épuisée) : les 4 tentatives d'édition ont échoué
+en 429. Pas de retry en boucle — quota bloqué pour la journée.
+
+L'utilisateur a ensuite envoyé une DEUXIÈME photo (plus nette, cadrage
+frontal) mais **uniquement collée inline dans le chat, jamais comme
+pièce jointe récupérable** — `/root/.claude/uploads/.../` ne contenait
+que le premier HEIF, malgré 3 tentatives de sa part de la renvoyer.
+Limitation technique de cette session (pas un problème côté
+utilisateur) : impossible d'extraire les octets d'une image simplement
+affichée inline, seul un vrai upload de fichier laisse un chemin
+exploitable.
+
+**Décision finale** : l'utilisateur a explicitement renoncé à la
+stylisation IA ("garde la telle quelle donc juste à intégrer") — plus
+simple et ça évite le blocage de quota. Recadrage carré 640×640 de la
+PREMIÈRE photo (celle réellement récupérable) avec Pillow, centré sur le
+visage (essai unique, cadrage jugé correct), remplace directement
+`public-site/avatar.jpg`. Pas de génération IA utilisée pour l'avatar
+final — juste une vraie photo recadrée.
+
 **DNS** : l'utilisateur gère lui-même le changement de nom de domaine
 ("il n'y a pas de problème pour ça, il s'agit seulement d'une
 redirection") — pas de blocage de sa part sur cette étape, contrairement

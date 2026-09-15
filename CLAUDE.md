@@ -54,9 +54,11 @@ the same process. Treat edits to it as editing a static asset, not
 application code: it has its own `<style>`/`<script>` blocks and its own
 `localStorage`-based state management (`STORE_KEY`), copied over as-is
 from what was extracted out of Canva Code (see `.memory`). Its one image,
-`public-site/avatar.jpg`, is AI-generated (the original Canva-hosted
-photo used a `canva://...` URL that only resolves inside Canva's own
-runtime — worthless once served from anywhere else).
+`public-site/avatar.jpg`, is a real photo of Medy (square-cropped from a
+phone photo he uploaded), replacing the original `canva://...` URL that
+only resolved inside Canva's own runtime — worthless once served from
+anywhere else. (An AI-generated headshot briefly stood in for it — see
+`.memory` for why that got replaced.)
 
 **Separate project, do not mix**: `medycazal-ia/tp-opt` (the
 "Guichet Tiers Payants" / tierspayant.site product for opticians) is an
