@@ -24,4 +24,11 @@ export const config = {
     sessionSecret: process.env.SESSION_SECRET ?? "",
     sessionTtlMs: 12 * 60 * 60 * 1000, // 12h
   },
+
+  // CRM (gestion clients) : stocké dans Airtable plutôt qu'en JSON local,
+  // voir server/src/airtable/. Base "Medy CRM — Clients & Projets".
+  airtable: {
+    apiKey: process.env.AIRTABLE_API_KEY ?? "",
+    baseId: process.env.AIRTABLE_BASE_ID ?? "app2Zji7fTJLN9aAg",
+  },
 };

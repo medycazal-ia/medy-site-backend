@@ -16,8 +16,15 @@ that gives the static site two things it cannot have on its own:
 - `POST /api/signups` (public) — captures the "S'inscrire" form, since
   `localStorage` is per-visitor and useless for collecting emails.
 
-A small React admin app (`web/`) lets Medy manage both (add/edit/delete
-projects, view/delete signups) behind a single admin login. See
+It has since grown into Medy's **client/CRM backend** too: `/api/crm/*`
+(companies, contacts, client projects, meetings, audits, commercial
+proposals, payments, roadmap steps, messages) — all admin-only, all
+stored in **Airtable**, not JSON files. See "CRM / Airtable" below.
+
+A small React admin app (`web/`) lets Medy manage the public portfolio
+and signups (add/edit/delete projects, view/delete signups) behind a
+single admin login. It does not yet have UI for the CRM resources
+(Airtable's own interface is used for those today — see `.memory`). See
 `docs/DESIGN.md` for the full rationale and `README.md` for setup/
 deployment.
 
@@ -91,6 +98,48 @@ vars pointing at a fresh temp dir are set *before* dynamically importing
 `api/app.js`/`db.js`, since `config.ts` reads them at import time. Follow
 this pattern for new integration tests.
 
+## CRM / Airtable
+
+Client data (companies, contacts, projects, meetings, audits, proposals,
+payments, roadmap, messages) lives in an **Airtable base** ("Medy CRM —
+Clients & Projets", `baseId` in `config.ts`/`AIRTABLE_BASE_ID`), not in
+this server's JSON stores — deliberate choice so Medy can browse/edit
+records directly in Airtable's own UI, not just through this API.
+
+- `server/src/airtable/client.ts` — generic `AirtableTable<F>` REST
+  client (list with pagination, get, create, update, remove). Holds the
+  only place `AIRTABLE_API_KEY` is read; the key never reaches `web/` or
+  any public route.
+- One file per entity in `server/src/airtable/` (`companies.ts`,
+  `contacts.ts`, `clientProjects.ts`, `meetings.ts`, `audits.ts`,
+  `proposals.ts`, `payments.ts`, `roadmap.ts`, `messages.ts`): each maps
+  Airtable's French field names (exactly as created in the base — do not
+  rename fields in Airtable without updating the matching `Fields`
+  interface here) to a clean camelCase type, via `fromRecord`/`toFields`.
+  Linked-record fields become `string[]` of record IDs (no nested
+  resolution); attachment fields go through `mapping.ts`'s
+  `readAttachments`/`writeAttachments` — writing an attachment means
+  giving Airtable a URL to fetch, there is no file upload endpoint here.
+- `server/src/airtable/crudRouter.ts` — the 9 resources are identical
+  CRUD shapes, so routes are generated once (`createCrudRouter`) instead
+  of hand-repeated; `server/src/api/routes/crm.ts` wires each repo to its
+  path under `/api/crm/`.
+- **Mounted entirely behind `requireAuth`** in `app.ts` (router-level,
+  unlike `projects`/`signups`): every `/api/crm/*` route needs an admin
+  session, no exceptions — this is client data, never public.
+- Errors: `HttpError` (`httpError.ts`) carries an HTTP status; a
+  catch-all error-handling middleware at the end of `app.ts` converts
+  any thrown `HttpError` to its JSON response and logs anything else as
+  a 500. `AirtableError extends HttpError` (in `airtable/client.ts`)
+  logs the real Airtable status/body server-side but never leaks it to
+  the client (always a generic 502).
+- **Testing boundary**: `tests/mapping.test.ts` unit-tests the pure
+  `readAttachments`/`writeAttachments`/`linkIds` helpers; `tests/crm.test.ts`
+  checks every `/api/crm/*` resource 401s without a session — neither
+  needs a real `AIRTABLE_API_KEY`. There is no integration test that
+  hits real Airtable (no key available in CI/this environment); verify
+  manually against the live base once `AIRTABLE_API_KEY` is set.
+
 ## Not yet done
 
 - Render service not created/deployed yet.
@@ -99,3 +148,14 @@ this pattern for new integration tests.
   the first design-canvas draft — see `docs/DESIGN.md`'s "Intégration
   côté medy.site" section for what needs to change once this is
   deployed).
+- `AIRTABLE_API_KEY` not yet generated/set anywhere — `/api/crm/*` will
+  500 until it is (see `.env.example`).
+- No admin UI for the 9 CRM resources — Medy uses Airtable's own
+  interface for now; build React pages here only if that stops being
+  enough (e.g. once medy.site itself needs to read/write CRM data, which
+  would need public, scoped endpoints this API doesn't expose yet).
+- Messaging/telephony/video/transcription connectors (WhatsApp, click-
+  to-call, visio, audio transcription) discussed but not implemented:
+  proposed stack is Twilio (WhatsApp+SMS+voice), Daily.co (visio),
+  AssemblyAI (transcription), Stripe (payment proposals) — blocked on
+  the user creating those accounts and handing over API keys.

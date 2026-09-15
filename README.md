@@ -9,12 +9,25 @@ peut pas faire seul :
   créations"**, modifiable sans toucher au code du site,
 - la capture des inscriptions du bouton **"S'inscrire"**.
 
+## CRM clients (Airtable)
+
+En plus du portfolio public, ce backend expose `/api/crm/*` (entreprises,
+contacts, projets clients, RDV, audits, propositions commerciales,
+paiements, feuille de route, messages) — entièrement protégé par
+connexion admin, données stockées dans Airtable plutôt qu'en JSON local.
+Pour l'activer : créer un [Personal Access Token Airtable](https://airtable.com/create/tokens)
+(scopes `data.records:read`, `data.records:write`, `schema.bases:read`,
+restreint à la base "Medy CRM — Clients & Projets") et le renseigner en
+variable d'env `AIRTABLE_API_KEY`. Sans cette clé, ces routes répondent
+une erreur 500 — le reste du site (portfolio, inscriptions) fonctionne
+normalement.
+
 ## Démarrage local
 
 ```bash
 # Terminal 1 — API
 cd server
-cp .env.example .env   # renseigner ADMIN_PASSWORD et SESSION_SECRET
+cp .env.example .env   # renseigner ADMIN_PASSWORD, SESSION_SECRET, AIRTABLE_API_KEY
 npm install
 npm run dev             # http://localhost:4200
 

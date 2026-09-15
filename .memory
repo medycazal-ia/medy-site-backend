@@ -30,12 +30,30 @@ d'inscription. D'où ce backend séparé, sur le même schéma que
 - **Backend** (ce dépôt) : scaffoldé en s'inspirant fidèlement de
   `tp-opt`/`vendor-admin` (lu avec l'accord de l'utilisateur) — server/
   Express + TypeScript (auth par cookie signé, un seul compte admin,
-  stores JSON), web/ React admin minimal (palette medy.site reprise).
-  **Pas encore déployé** : le dépôt GitHub distant n'a pas pu être créé
-  depuis cette session (limitation de la sandbox — impossible de créer un
-  nouveau dépôt via l'API GitHub, seuls les dépôts déjà attachés à la
-  session sont accessibles). Il faut que l'utilisateur crée le dépôt vide
-  côté GitHub (ou en donne un existant) pour que le code y soit poussé.
+  stores JSON pour portfolio/inscriptions), web/ React admin minimal
+  (palette medy.site reprise). Poussé sur
+  https://github.com/medycazal-ia/medy-site-backend (dépôt créé par
+  l'utilisateur lui-même — impossible d'en créer un depuis cette session,
+  limitation sandbox : seuls les dépôts déjà attachés sont accessibles).
+  **Pas encore déployé sur Render.**
+- **CRM (Airtable)** : ajouté sur demande de l'utilisateur (gestion
+  clients/entreprises/projets/RDV/audits/propositions/paiements/feuille
+  de route/messages). L'utilisateur a validé "serveur Express pour
+  Airtable" : Express détient seul la clé API Airtable
+  (`AIRTABLE_API_KEY`), jamais exposée côté client ni dans `web/`. Toutes
+  les routes `/api/crm/*` sont derrière `requireAuth` — aucune donnée
+  client n'est publique. 9 repos Airtable (un par table) suivant le même
+  patron (`fromRecord`/`toFields`), routes générées via un routeur CRUD
+  générique (`createCrudRouter`) plutôt que réécrites 9 fois. Testé :
+  401 sans session sur les 9 ressources + tests unitaires du mapping des
+  pièces jointes/liens — pas de test d'intégration réel contre Airtable
+  (pas de clé API disponible dans cet environnement).
+  **Pas d'interface d'admin React pour ces 9 ressources** : l'utilisateur
+  utilise Airtable directement pour l'instant (c'est justement pourquoi
+  il a demandé Airtable plutôt qu'un store JSON). À reconsidérer si
+  medy.site doit un jour lire/écrire ces données lui-même.
+  **`AIRTABLE_API_KEY` pas encore généré/fourni** — `/api/crm/*` répond
+  500 tant que ce n'est pas fait.
 - **Intégration site ↔ backend** : PAS ENCORE FAITE. Le canvas de design
   actuel utilise encore des cartes codées en dur et un lien `mailto:` —
   il faudra mettre à jour le JS collé dans l'éditeur Canva Code de
