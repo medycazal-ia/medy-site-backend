@@ -13,15 +13,17 @@ import { projectsRouter } from "./routes/projects.js";
 import { signupsRouter } from "./routes/signups.js";
 import { twilioRouter } from "./routes/twilio.js";
 
-// server/dist/api/app.js -> repo root, pour retrouver le build statique de l'admin.
+// server/dist/api/app.js -> repo root, pour retrouver les fichiers statiques.
 const here = path.dirname(fileURLToPath(import.meta.url));
 const webDist = path.resolve(here, "../../../web/dist");
+const publicSiteDir = path.resolve(here, "../../../public-site");
 
 export function createApp() {
   const app = express();
-  // CORS ouvert : /api/projects (GET) et /api/signups (POST) sont appelés
-  // depuis medy.site, un domaine différent (Canva Sites). Les routes admin
-  // sont protégées par cookie de session, servies same-origin en prod.
+  // CORS ouvert : historiquement nécessaire quand medy.site vivait sur Canva
+  // (domaine différent) ; conservé même maintenant que medy.site et l'API
+  // sont le même service, au cas où une autre origine appelle ces routes
+  // publiques. Les routes admin restent protégées par cookie de session.
   app.use(cors());
   app.use(express.json());
   // Twilio poste ses webhooks en application/x-www-form-urlencoded, jamais en JSON.
@@ -39,6 +41,24 @@ export function createApp() {
   // route dans twilioRouter) ; /voice/connect et /inbound sont les webhooks
   // publics de Twilio, protégés par vérification de signature à la place.
   app.use("/api/twilio", twilioRouter);
+
+  // Un seul service, deux sites distincts selon le domaine de la requête :
+  // medy.site (et www.medy.site) reçoit le site public statique
+  // (public-site/, localStorage, aucun appel API) ; tout autre host —
+  // medy-site-backend.onrender.com compris, utilisé par le clic caché du
+  // logo — reçoit l'admin React (web/dist) comme avant.
+  app.use((req, res, next) => {
+    if (req.path.startsWith("/api/")) return next();
+    const host = req.hostname;
+    const isPublicSiteHost =
+      host === config.publicSite.host || host === `www.${config.publicSite.host}`;
+    if (isPublicSiteHost && fs.existsSync(publicSiteDir)) {
+      return express.static(publicSiteDir)(req, res, () => {
+        res.sendFile(path.join(publicSiteDir, "index.html"));
+      });
+    }
+    next();
+  });
 
   if (fs.existsSync(webDist)) {
     app.use(express.static(webDist));

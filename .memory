@@ -153,3 +153,48 @@ par l'utilisateur) : **"Medy CRM — Clients & Projets"**
   cross-origin ; les routes admin restent protégées par cookie, servies
   en same-origin en prod (l'admin `web/` est buildé et servi par le même
   service Express), donc pas besoin d'un CORS à credentials.
+
+## Migration hors Canva (medy.site devient statique dans ce dépôt)
+
+Suite directe des frictions répétées à faire éditer manuellement le code
+Canva par l'utilisateur (snippets mal fusionnés, cartes de tailles
+différentes, confusion sur ce qui avait été réellement collé — voir les
+échanges "il n'y a pas de lien pour ouvrir tierspayant" et "refonds moi
+ce code"). L'utilisateur a fini par coller ici, dans la conversation, le
+code source COMPLET de son site tel qu'affiché par Canva ("view-source"),
+pour que je corrige directement — ce qui a rendu la migration triviale :
+j'avais déjà tout le contenu réel (profil, liens, données `localStorage`,
+mon bouton secret déjà fusionné par l'utilisateur).
+
+Demande explicite : "peux-tu faire cela toi-même et que je ne sois plus
+obligé de dépendre de Canva pour l'exécuter". Proposé et validé par
+l'utilisateur : migration complète plutôt que rester sur Canva. Décision
+initiale : nouveau dépôt GitHub dédié + GitHub Pages — l'utilisateur a
+ensuite dit préférer rester sur le dépôt `medy-site-backend` existant
+plutôt que d'en créer un nouveau ("je pense que ce n'est pas nécessaire
+de refaire un dépôt, on reste sur celui-ci de toute façon"). D'où
+l'architecture finale : un seul service Express, routage par nom de
+domaine (`Host` header) — voir `CLAUDE.md`, "Public site host routing".
+
+**Photo de profil** : l'original utilisait `src="canva://MAG8VVji4bM/1"`,
+une URL propre à l'infrastructure Canva, invalide partout ailleurs.
+Plutôt qu'une vraie photo (l'utilisateur n'en a pas fourni), demande
+explicite d'un avatar généré ("crée-moi un avatar réaliste") — généré
+via `creative_generate_image` (bytedance-seedream-5-pro), recadré en
+carré 640×640 et compressé en JPEG (~47 Ko) avec Pillow (installé dans
+cet environnement, pas de convert/ImageMagick disponible). Stocké en
+`public-site/avatar.jpg`.
+
+**DNS** : l'utilisateur gère lui-même le changement de nom de domaine
+("il n'y a pas de problème pour ça, il s'agit seulement d'une
+redirection") — pas de blocage de sa part sur cette étape, contrairement
+à ce que je craignais initialement en la soulevant. Reste à faire : dans
+le dashboard Render, ajouter `medy.site` comme domaine personnalisé du
+service `medy-site-backend`, puis poser les enregistrements DNS exacts
+que Render affichera (ne pas se fier à une IP mémorisée ici, elle peut
+changer — voir README).
+
+**Testé** : routage par `Host` vérifié en local avec `curl -H "Host:
+medy.site"` vs sans en-tête — sert bien deux pages différentes, `/api/*`
+reste accessible quel que soit l'hôte. Build + tests toujours verts après
+ces changements.

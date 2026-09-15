@@ -13,6 +13,14 @@ export const config = {
     name: process.env.BRAND_NAME ?? "medy.site",
   },
 
+  // Le même service sert deux sites différents selon le nom de domaine de la
+  // requête : medy.site (le site public, statique, public-site/index.html)
+  // vs tout autre host — y compris <service>.onrender.com — qui reste
+  // l'admin React (web/dist). Voir app.ts.
+  publicSite: {
+    host: process.env.PUBLIC_SITE_HOST ?? "medy.site",
+  },
+
   dataDir,
   adminsPath: path.resolve(process.env.ADMINS_PATH ?? path.join(dataDir, "admins.json")),
   projectsPath: path.resolve(process.env.PROJECTS_PATH ?? path.join(dataDir, "projects.json")),

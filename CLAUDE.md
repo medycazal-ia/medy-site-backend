@@ -4,33 +4,59 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Backend for **medy.site** ("Profil Connecté") — Medy Cazal's personal
-portfolio site, built and hosted on **Canva Sites** (100% static HTML/JS,
-no server-side code, `localStorage` for local-only state). This repo is
-NOT the site itself (that lives in Canva); it's the small external API
-that gives the static site two things it cannot have on its own:
+**One Express service, three faces**, split by what's requesting it:
 
-- `GET /api/projects` (public) — the list of portfolio entries shown in
-  the "Mes créations" section, fetched client-side from medy.site so new
-  projects can be added without editing the Canva page.
-- `POST /api/signups` (public) — captures the "S'inscrire" form, since
-  `localStorage` is per-visitor and useless for collecting emails.
+- **`medy.site` / `www.medy.site`** (any browser) → `public-site/index.html`,
+  Medy Cazal's personal portfolio page ("Profil Connecté"). Fully static
+  (HTML/CSS/JS, Tailwind + Lucide via CDN, `localStorage` for the local
+  "Administration" panel — profile/links/media). Originally built and
+  hosted on **Canva Sites**; migrated here (as a static file this repo
+  serves) specifically so Medy isn't dependent on Canva Code's editor for
+  every change — see `.memory` for that history. `app.ts` picks this vs.
+  the admin app purely by the request's `Host` header (see "Public site
+  host routing" below); there is no other distinction.
+- **Any other host** (`medy-site-backend.onrender.com`, `localhost`, ...)
+  → the React admin app (`web/dist`), behind a login. This is what the
+  hidden 5-click trigger on the public site's logo opens in a new tab.
+- **`/api/*`** (any host) → the API: `GET /api/projects` / `POST
+  /api/signups` (public — support the portfolio/signup pieces of
+  `public-site/index.html`, though that page doesn't actually call them
+  yet, see "Not yet done"), `/api/crm/*` (admin-only, Airtable-backed
+  CRM), `/api/twilio/*` (admin-only sends + public signature-verified
+  webhooks).
 
-It has since grown into Medy's **client/CRM backend** too: `/api/crm/*`
-(companies, contacts, client projects, meetings, audits, commercial
-proposals, payments, roadmap steps, messages) — all admin-only, all
-stored in **Airtable**, not JSON files. See "CRM / Airtable" below.
+The React admin app (`web/`) covers portfolio/signups management, the 9
+CRM resources (generic schema-driven CRUD — see "CRM admin UI" below),
+and a Twilio composer (send SMS/WhatsApp, click-to-call) on the Messages
+tab. Medy can still use Airtable's own interface directly for CRM data if
+that's ever more convenient. See `docs/DESIGN.md` for the fuller
+rationale and `README.md` for setup/deployment.
 
-The React admin app (`web/`) covers all of it behind a single admin
-login: the public portfolio and signups, the 9 CRM resources (generic
-schema-driven CRUD — see "CRM admin UI" below), and a Twilio composer
-(send SMS/WhatsApp, click-to-call) on the Messages tab. Medy can still
-use Airtable's own interface directly if that's ever more convenient
-(nothing here requires going through this UI). See `docs/DESIGN.md` for
-the full rationale and `README.md` for setup/deployment.
+Live deployment: pushed to Render (`render.yaml` at repo root is the
+blueprint) — custom domain (`medy.site`) not yet attached in the Render
+dashboard, see README's "Site public medy.site".
 
-Live deployment: not yet deployed (Render free tier once created —
-`render.yaml` at repo root is the blueprint; see README).
+## Public site host routing
+
+`server/src/api/app.ts`: a middleware early in the chain checks
+`req.hostname` against `config.publicSite.host` (env `PUBLIC_SITE_HOST`,
+default `"medy.site"`) and its `www.` variant. A match (and skipping any
+`/api/*` path, which always falls through regardless of host) serves
+`public-site/` via `express.static`, falling back to
+`public-site/index.html` for any other GET — otherwise the request falls
+through to the existing `web/dist` admin static+catch-all, unchanged.
+Test locally with `curl -H "Host: medy.site" http://localhost:4200/`
+before touching real DNS.
+
+`public-site/index.html` is a **complete, self-contained page** — no
+build step, no dependency on `server/` or `web/` beyond being served by
+the same process. Treat edits to it as editing a static asset, not
+application code: it has its own `<style>`/`<script>` blocks and its own
+`localStorage`-based state management (`STORE_KEY`), copied over as-is
+from what was extracted out of Canva Code (see `.memory`). Its one image,
+`public-site/avatar.jpg`, is AI-generated (the original Canva-hosted
+photo used a `canva://...` URL that only resolves inside Canva's own
+runtime — worthless once served from anywhere else).
 
 **Separate project, do not mix**: `medycazal-ia/tp-opt` (the
 "Guichet Tiers Payants" / tierspayant.site product for opticians) is an
@@ -220,12 +246,18 @@ of failing obscurely.
 
 ## Not yet done
 
-- Render service not created/deployed yet.
-- medy.site's own Canva Code JS has not been updated to call this API
-  (still uses hard-coded portfolio cards and a `mailto:` signup link from
-  the first design-canvas draft — see `docs/DESIGN.md`'s "Intégration
-  côté medy.site" section for what needs to change once this is
-  deployed).
+- `medy.site` custom domain not yet attached in the Render dashboard —
+  `public-site/index.html` only serves today under whatever host the
+  Render service answers to when its `Host` header matches
+  `config.publicSite.host`; until DNS + the dashboard step are done,
+  visitors to the real medy.site still see whatever hosted it before
+  (Canva, if not yet repointed).
+- `public-site/index.html` still doesn't call `GET /api/projects` /
+  `POST /api/signups` — it's the page as extracted from Canva Code
+  (hard-coded portfolio cards, `mailto:` signup link), not yet wired to
+  this repo's own API. Low priority: the page works fine as-is; wiring it
+  up mainly matters if Medy wants to add/edit portfolio projects without
+  a code change.
 - `AIRTABLE_API_KEY` not yet generated/set anywhere — `/api/crm/*` will
   500 until it is (see `.env.example`).
 - All `TWILIO_*` env vars unset — nothing in `server/src/twilio/` can run

@@ -1,9 +1,10 @@
 # medy-site-backend
 
-API + interface d'administration pour [medy.site](https://medy.site)
-("Profil Connecté"), le site personnel de Medy Cazal. Le site lui-même
-est statique (Canva Sites) ; ce service fournit ce qu'un site statique ne
-peut pas faire seul :
+Le site public [medy.site](https://medy.site) ("Profil Connecté", Medy
+Cazal) **et** son API/CRM d'administration, servis par le même service
+Express, différencié par nom de domaine (voir "Site public medy.site"
+ci-dessous). Anciennement hébergé sur Canva Sites — migré ici pour ne
+plus dépendre de l'éditeur Canva Code.
 
 - la liste des projets affichés dans la section publique **"Mes
   créations"**, modifiable sans toucher au code du site,
@@ -82,8 +83,9 @@ as Code" de Render) :
    l'onglet **Environment** du service une fois créé pour se connecter
    la première fois.
 3. Une fois déployé, l'URL du service (`https://medy-site-backend.onrender.com`
-   ou équivalent) sert à la fois l'API (`/api/...`) et l'interface
-   d'administration (`/`).
+   ou équivalent) sert l'API (`/api/...`) et l'interface d'administration
+   (`/`). Le site public medy.site n'apparaît qu'une fois le domaine
+   personnalisé branché — voir "Site public medy.site" ci-dessous.
 
 **Limite acceptée pour l'instant** : le plan gratuit Render n'a pas de
 disque persistant — les données (projets, inscriptions, compte admin)
@@ -93,13 +95,34 @@ au redémarrage (valeur par défaut codée), mais **les inscriptions et
 tout projet ajouté depuis l'admin seront perdus** tant que ce n'est pas
 passé sur un plan payant avec disque, ou une vraie base de données.
 
-## Intégration dans medy.site (Canva Code)
+## Site public medy.site
 
-Voir `docs/DESIGN.md` — le site Canva doit être mis à jour pour :
-- charger dynamiquement `GET /api/projects` au lieu des cartes codées
-  en dur dans la première version du canvas de design,
-- envoyer le formulaire "S'inscrire" en `POST /api/signups` au lieu du
-  lien `mailto:` temporaire.
+`public-site/index.html` est le site public complet (profil, "Mes
+liens", "Mes créations", espace "Administration" local en
+`localStorage` — indépendant du CRM/API de ce dépôt). `app.ts` choisit
+quoi servir selon l'en-tête `Host` de la requête :
+
+- `medy.site` / `www.medy.site` → `public-site/` (statique)
+- tout autre domaine (`medy-site-backend.onrender.com` compris — c'est
+  l'URL que le clic caché sur le logo ouvre) → l'admin React (`web/dist`)
+
+### Brancher le domaine medy.site sur Render
+
+1. Dans le dashboard Render, sur le service `medy-site-backend` :
+   **Settings → Custom Domains → Add Custom Domain**, saisir `medy.site`
+   (et `www.medy.site` si souhaité).
+2. Render affiche les enregistrements DNS exacts à poser chez le
+   registrar du domaine (généralement un `A` sur `@` vers l'IP de Render,
+   et/ou un `CNAME` sur `www`) — suivre ces valeurs precises plutôt
+   qu'une IP mémorisée ailleurs, elles peuvent changer.
+3. Une fois la propagation DNS faite, Render détecte le domaine et
+   provisionne automatiquement un certificat HTTPS (Let's Encrypt).
+
+Pour tester le routage en local avant de toucher au DNS :
+```bash
+curl -H "Host: medy.site" http://localhost:4200/        # site public
+curl http://localhost:4200/                                # admin
+```
 
 ## Tests
 

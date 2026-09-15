@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="fr"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260915-03-e4a8234","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Connecté</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#172554; --blue:#2563eb; --violet:#6d28d9; --line:#dbe4f4; --card:rgba(255,255,255,.91); --surface:#f5f7ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:"Work Sans",sans-serif; color:var(--ink); }
+    body[data-theme="dark"] { --ink:#e8edff; --line:#293758; --card:rgba(18,28,53,.92); --surface:#111a31; color:#e8edff; }
+    .app-shell { width:100%; min-height:calc(100 * min(var(--vh, 1vh), 1vh)); background:linear-gradient(135deg,#eff6ff 0%,#faf5ff 56%,#eef2ff 100%); }
+    body[data-theme="dark"] .app-shell { background:linear-gradient(135deg,#0c1530,#151136 56%,#101c39); }
+    .glass-card { background:var(--card); border:1px solid rgba(191,219,254,.72); box-shadow:0 18px 52px rgba(49,46,129,.11); }
+    body[data-theme="dark"] .glass-card { border-color:#293758; box-shadow:0 18px 52px rgba(0,0,0,.28); }
+    .view,.admin-panel { display:none; }
+    .view.active,.admin-panel.active { display:block; }
+    .admin-nav-btn.active { color:#4f46e5; border-color:#4f46e5; background:#eef2ff; }
+    body[data-theme="dark"] .admin-nav-btn.active { color:#c7d2fe; background:#25305c; border-color:#a5b4fc; }
+    .admin-input { width:100%; border:1px solid #cbd5e1; border-radius:.75rem; padding:.72rem .85rem; color:#172554; background:#fff; }
+    body[data-theme="dark"] .admin-input { background:#111c36; border-color:#3a4b72; color:#e8edff; }
+    .admin-input:focus { border-color:#6366f1; outline:3px solid rgba(99,102,241,.18); }
+    .link-card { transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease; }
+    .link-card:hover { transform:translateY(-3px); border-color:#a5b4fc; box-shadow:0 14px 28px rgba(79,70,229,.13); }
+    .toast { transform:translateY(135%); opacity:0; transition:.28s ease; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .modal-backdrop { display:none; }
+    .modal-backdrop.open { display:flex; }
+    .avatar { background-position:center; background-size:cover; }
+    .status-dot { width:.55rem; height:.55rem; border-radius:999px; display:inline-block; }
+    input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible { outline:3px solid rgba(99,102,241,.48); outline-offset:3px; }
+    .public-hidden { display:none!important; }
+    .public-content-grid { display:contents; }
+    .public-layout-grid { display:grid; grid-template-columns:minmax(210px, 260px) minmax(0, 1fr); gap:1.25rem; align-items:start; }
+    #public-profile-section { padding:1rem; grid-column:1; grid-row:1; min-width:0; width:100%; }
+    #portfolio-section { grid-column:2; grid-row:1; min-width:0; }
+    #public-profile-section > div { align-items:stretch; }
+    #public-profile-section #public-avatar { width:4.25rem; height:4.25rem; border-radius:1rem; }
+    #public-profile-section #public-function { margin-top:.7rem; font-size:.62rem; }
+    #public-profile-section #public-name { margin-top:.2rem; font-size:1.25rem; }
+    #public-profile-section #public-intro { margin-top:.55rem; font-size:.75rem; line-height:1.35; }
+    #public-profile-section > div > div { margin-top:.8rem; }
+    #public-profile-section a { padding:.6rem .7rem; font-size:.72rem; }
+    #public-profile-section a i { width:1rem; height:1rem; }
+    #portfolio-section.mc-section { max-width:none; width:100%; height:100%; margin:0; padding:1rem; }
+    #portfolio-section .mc-title { margin-bottom:1rem; }
+    #portfolio-section .mc-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; align-items:start; }
+    @media (max-width:860px) {
+      .public-layout-grid { grid-template-columns:1fr; }
+      #public-profile-section, #portfolio-section { grid-column:1; }
+      #public-profile-section { grid-row:1; }
+      #portfolio-section { grid-row:2; }
+      #portfolio-section .mc-grid { grid-template-columns:1fr; }
+    }
+  </style>
+ </head>
+ <body data-template-id="__page-root" style="background: linear-gradient(135deg, rgb(239, 246, 255), rgb(250, 245, 255), rgb(238, 242, 255));">
+  <div class="app-shell">
+   <header class="w-full px-4 sm:px-8 py-5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+     <button id="profil-logo" type="button" class="flex items-center gap-3 text-left" onclick="showView('public')"> <span class="w-10 h-10 grid place-items-center rounded-xl bg-gradient-to-br from-blue-600 to-violet-700 text-white shadow-lg"><i data-lucide="orbit" aria-hidden="true"></i></span> <span id="brand-display" data-template-id="brand-name" class="canva-text font-bold tracking-tight" style="color: rgb(23, 37, 84); font-weight: 800; font-style: normal; font-size: 20px;">Profil Connecté</span> </button> <button data-template-id="manage-button" type="button" class="canva-button inline-flex items-center gap-2 rounded-xl px-4 py-2.5 font-semibold text-white shadow-md hover:shadow-lg transition" onclick="openAdministration()" style="background: rgb(37, 99, 235); color: rgb(255, 255, 255); font-weight: 700;"> <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i> <span data-template-id="manage-button-label" class="canva-text" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Administration</span> </button>
+    </div>
+   </header>
+   <main class="w-full px-4 sm:px-8 pb-16">
+    <section id="public-view" class="view active max-w-6xl mx-auto">
+     <div class="public-layout-grid">
+      <aside id="public-profile-section" class="glass-card rounded-3xl p-5 sm:p-6">
+       <div class="flex flex-col items-center text-center">
+        <img id="public-avatar" data-template-id="profile-photo" class="avatar w-24 h-24 rounded-2xl shadow-lg ring-4 ring-white object-cover" loading="lazy" role="img" aria-label="Photo de profil" src="avatar.jpg" alt="Photo de profil de Medy Cazal">
+        <p id="public-function" class="mt-4 text-xs font-semibold uppercase tracking-[.14em] text-violet-700"></p>
+        <h1 id="public-name" class="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900"></h1>
+        <p id="public-intro" class="mt-3 max-w-sm text-sm leading-5 text-slate-600"></p>
+        <div class="w-full mt-5 space-y-2 text-left">
+         <a id="public-email" class="flex items-center gap-3 rounded-xl bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800 hover:bg-blue-100" href="#"><i data-lucide="mail" class="w-5 h-5 shrink-0" aria-hidden="true"></i><span class="truncate"></span></a> <a id="public-phone" class="flex items-center gap-3 rounded-xl bg-violet-50 px-4 py-3 text-sm font-medium text-violet-800 hover:bg-violet-100" href="#"><i data-lucide="phone" class="w-5 h-5 shrink-0" aria-hidden="true"></i><span></span></a>
+        </div>
+       </div>
+      </aside>
+      <div id="public-content-grid" class="public-content-grid">
+       <!-- Galerie média retirée de la page publique. -->
+      </div>
+     </div>
+    </section>
+    <section id="admin-view" class="view max-w-6xl mx-auto">
+     <div class="glass-card rounded-3xl overflow-hidden">
+      <div class="bg-slate-900 px-6 sm:px-8 py-6 text-white flex flex-wrap items-center justify-between gap-4">
+       <div>
+        <p data-template-id="admin-kicker" class="canva-text text-xs font-bold uppercase tracking-[.18em] text-blue-200" style="color: rgb(191, 219, 254); font-weight: 700; font-style: normal; font-size: 16px;">Mode édition local</p>
+        <h1 data-template-id="admin-title" class="canva-text mt-1 font-bold" style="color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 32px;">Espace administration</h1>
+       </div>
+       <div class="flex flex-wrap gap-2">
+        <button data-template-id="back-button" type="button" class="canva-button rounded-xl px-4 py-2 text-sm font-semibold hover:bg-white/25" onclick="showView('public')" style="background: rgba(255, 255, 255, 0.15); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Voir le site public</button> <button data-template-id="logout-button" type="button" class="canva-button rounded-xl px-4 py-2 text-sm font-semibold hover:bg-violet-500" onclick="logoutLocal()" style="background: rgb(124, 58, 237); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Se déconnecter</button>
+       </div>
+      </div>
+      <div data-template-id="demo-notice" class="canva-banner mx-6 sm:mx-8 mt-6 rounded-2xl border border-amber-200 p-4 text-sm" style="background: rgb(255, 251, 235); color: rgb(120, 53, 15);">
+       <div class="flex gap-3"><i data-lucide="shield-alert" class="w-5 h-5 shrink-0" aria-hidden="true"></i><span data-template-id="demo-notice-text" class="canva-text" style="color: rgb(120, 53, 15); font-weight: 400; font-style: normal; font-size: 16px;">Cette zone est une démonstration locale côté navigateur. Elle ne remplace pas une sécurité serveur pour un usage réel.</span>
+       </div>
+      </div>
+      <nav aria-label="Navigation administration" class="px-4 sm:px-8 mt-6 border-b border-slate-200 flex gap-1 overflow-x-auto">
+       <button data-template-id="tab-dashboard" type="button" class="canva-tabs admin-nav-btn active shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold" data-panel="dashboard" style="color: rgb(51, 65, 85); font-weight: 700; font-style: normal; font-size: 16px;">Tableau de bord</button> <button data-template-id="tab-profile" type="button" class="canva-tabs admin-nav-btn shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold" data-panel="profile" style="color: rgb(51, 65, 85); font-weight: 700; font-style: normal; font-size: 16px;">Profil</button> <button data-template-id="tab-links" type="button" class="canva-tabs admin-nav-btn shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold" data-panel="links" style="color: rgb(51, 65, 85); font-weight: 700; font-style: normal; font-size: 16px;">Liens</button> <button data-template-id="tab-media" type="button" class="canva-tabs admin-nav-btn shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold" data-panel="media" style="color: rgb(51, 65, 85); font-weight: 700; font-style: normal; font-size: 16px;">Médias</button> <button data-template-id="tab-settings" type="button" class="canva-tabs admin-nav-btn shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold" data-panel="settings" style="color: rgb(51, 65, 85); font-weight: 700; font-style: normal; font-size: 16px;">Paramètres</button> <button data-template-id="tab-security" type="button" class="canva-tabs admin-nav-btn shrink-0 border-b-2 border-transparent px-4 py-3 text-sm font-bold" data-panel="security" style="color: rgb(51, 65, 85); font-weight: 700; font-style: normal; font-size: 16px;">Sécurité</button>
+      </nav>
+      <div class="p-6 sm:p-8">
+       <section id="panel-dashboard" class="admin-panel active">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+         <div>
+          <p class="text-sm font-bold uppercase tracking-widest text-violet-700">Vue générale</p>
+          <h2 class="mt-1 text-2xl font-extrabold text-slate-900">Tableau de bord</h2>
+         </div><span id="site-status" class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700"></span>
+        </div>
+        <div class="mt-6 grid sm:grid-cols-3 gap-4">
+         <article class="rounded-2xl border border-blue-100 bg-blue-50 p-5"><i data-lucide="user-round" class="w-5 h-5 text-blue-700"></i>
+          <p class="mt-4 text-sm font-semibold text-blue-800">Profil</p>
+          <p id="stat-profile" class="mt-1 text-xl font-extrabold text-slate-900"></p>
+         </article>
+         <article class="rounded-2xl border border-violet-100 bg-violet-50 p-5"><i data-lucide="link" class="w-5 h-5 text-violet-700"></i>
+          <p class="mt-4 text-sm font-semibold text-violet-800">Liens actifs</p>
+          <p id="stat-links" class="mt-1 text-xl font-extrabold text-slate-900"></p>
+         </article>
+         <article class="rounded-2xl border border-emerald-100 bg-emerald-50 p-5"><i data-lucide="images" class="w-5 h-5 text-emerald-700"></i>
+          <p class="mt-4 text-sm font-semibold text-emerald-800">Médias visibles</p>
+          <p id="stat-media" class="mt-1 text-xl font-extrabold text-slate-900"></p>
+         </article>
+        </div>
+        <div class="mt-6 grid lg:grid-cols-2 gap-5">
+         <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 class="font-bold text-slate-900">Activité locale</h3>
+          <dl class="mt-4 space-y-3 text-sm">
+           <div class="flex justify-between gap-4">
+            <dt class="text-slate-500">
+             Dernière sauvegarde
+            </dt>
+            <dd id="last-save" class="font-semibold text-slate-800 text-right"></dd>
+           </div>
+           <div>
+            <dt class="text-slate-500">
+             Dernière modification
+            </dt>
+            <dd id="last-change" class="mt-1 font-semibold text-slate-800"></dd>
+           </div>
+          </dl>
+         </article>
+         <article class="rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 class="font-bold text-slate-900">Accès rapide</h3>
+          <div class="mt-4 grid gap-3"><button type="button" class="rounded-xl bg-blue-600 px-4 py-3 text-left font-bold text-white hover:bg-blue-700" onclick="selectPanel('profile')">Modifier le profil</button><button type="button" class="rounded-xl bg-violet-600 px-4 py-3 text-left font-bold text-white hover:bg-violet-700" onclick="selectPanel('links'); document.getElementById('link_label').focus()">Ajouter un lien</button><button type="button" class="rounded-xl bg-slate-800 px-4 py-3 text-left font-bold text-white hover:bg-slate-900" onclick="selectPanel('media'); document.getElementById('media_title').focus()">Ajouter un média</button>
+          </div>
+         </article>
+        </div>
+       </section>
+       <section id="panel-profile" class="admin-panel">
+        <h2 data-template-id="profile-form-title" class="canva-text font-bold text-slate-900" style="color: rgb(23, 37, 84); font-weight: 800; font-style: normal; font-size: 24px;">Informations du profil</h2>
+        <form id="profile-form" class="mt-6 grid sm:grid-cols-2 gap-5">
+         <div><label for="first_name" class="block mb-2 text-sm font-semibold">Prénom</label><input id="first_name" class="admin-input" required="" maxlength="60">
+         </div>
+         <div><label for="last_name" class="block mb-2 text-sm font-semibold">Nom</label><input id="last_name" class="admin-input" required="" maxlength="60">
+         </div>
+         <div><label for="job_title" class="block mb-2 text-sm font-semibold">Fonction</label><input id="job_title" class="admin-input" required="" maxlength="100">
+         </div>
+         <div><label for="phone" class="block mb-2 text-sm font-semibold">Téléphone</label><input id="phone" class="admin-input" type="tel" required="" maxlength="40">
+         </div>
+         <div class="sm:col-span-2"><label for="email" class="block mb-2 text-sm font-semibold">Adresse e-mail</label><input id="email" class="admin-input" type="email" required="" maxlength="120">
+         </div>
+         <div class="sm:col-span-2"><label for="site_title" class="block mb-2 text-sm font-semibold">Titre du site</label><input id="site_title" class="admin-input" required="" maxlength="90">
+         </div>
+         <div class="sm:col-span-2"><label for="bio" class="block mb-2 text-sm font-semibold">Courte présentation</label><textarea id="bio" class="admin-input min-h-28" maxlength="360"></textarea>
+         </div>
+         <div class="sm:col-span-2"><label for="photo_url" class="block mb-2 text-sm font-semibold">URL facultative de photo de profil</label><input id="photo_url" class="admin-input" type="url" placeholder="https://example.com/photo.jpg" maxlength="700">
+         </div>
+         <div class="sm:col-span-2"><button data-template-id="save-profile-button" type="submit" class="canva-button rounded-xl px-5 py-3 font-bold text-white hover:bg-blue-700" style="background: rgb(37, 99, 235); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Enregistrer le profil</button>
+         </div>
+        </form>
+       </section>
+       <section id="panel-links" class="admin-panel">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+         <h2 data-template-id="links-form-title" class="canva-text font-bold text-slate-900" style="color: rgb(23, 37, 84); font-weight: 800; font-style: normal; font-size: 24px;">Liens personnalisés</h2>
+         <p class="text-sm text-slate-500">Les liens actifs et publics apparaissent sur le site.</p>
+        </div>
+        <form id="link-form" class="mt-6 grid sm:grid-cols-2 gap-4">
+         <div><label for="link_label" class="block mb-2 text-sm font-semibold">Libellé</label><input id="link_label" class="admin-input" required="" maxlength="70">
+         </div>
+         <div><label for="link_url" class="block mb-2 text-sm font-semibold">Adresse</label><input id="link_url" class="admin-input" required="" placeholder="https:// ou mailto:" maxlength="500">
+         </div>
+         <div><label for="link_type" class="block mb-2 text-sm font-semibold">Type</label><select id="link_type" class="admin-input"><option>E-mail</option><option>Site web</option><option>Application</option></select>
+         </div>
+         <div><label for="link_description" class="block mb-2 text-sm font-semibold">Description</label><input id="link_description" class="admin-input" maxlength="160">
+         </div><label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold"><input id="link_public" type="checkbox" checked="" class="w-4 h-4 accent-violet-600"> Visible publiquement</label>
+         <div class="flex items-end"><button data-template-id="save-link-button" type="submit" class="canva-button rounded-xl px-5 py-3 font-bold text-white hover:bg-violet-700" style="background: rgb(124, 58, 237); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Ajouter le lien</button>
+         </div>
+        </form>
+        <div id="admin-links" class="mt-7 space-y-3"></div>
+        <p id="admin-links-empty" class="hidden rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">Aucun lien enregistré.</p>
+       </section>
+       <section id="panel-media" class="admin-panel">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+         <h2 data-template-id="media-form-title" class="canva-text font-bold text-slate-900" style="color: rgb(23, 37, 84); font-weight: 800; font-style: normal; font-size: 24px;">Médias</h2>
+         <p class="text-sm text-slate-500">Images URL, fichiers locaux de session ou vidéos YouTube.</p>
+        </div>
+        <form id="media-form" class="mt-6 grid gap-4">
+         <div class="grid sm:grid-cols-2 gap-4">
+          <div><label for="media_title" class="block mb-2 text-sm font-semibold">Titre</label><input id="media_title" class="admin-input" required="" maxlength="90">
+          </div>
+          <div><label for="media_url" class="block mb-2 text-sm font-semibold">URL d'image ou YouTube</label><input id="media_url" class="admin-input" type="url" maxlength="700">
+          </div>
+         </div>
+         <div><label for="media_description" class="block mb-2 text-sm font-semibold">Description</label><textarea id="media_description" class="admin-input min-h-24" maxlength="240"></textarea>
+         </div>
+         <div class="grid sm:grid-cols-2 gap-4 items-end">
+          <div><label for="media_file" class="block mb-2 text-sm font-semibold">Ou choisir une image locale</label><input id="media_file" class="block w-full text-sm text-slate-600" type="file" accept="image/*">
+          </div><label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold"><input id="media_public" type="checkbox" checked="" class="w-4 h-4 accent-violet-600"> Visible publiquement</label>
+         </div>
+         <div><button data-template-id="save-media-button" type="submit" class="canva-button rounded-xl px-5 py-3 font-bold text-white hover:bg-violet-700" style="background: rgb(124, 58, 237); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Ajouter le média</button>
+         </div>
+        </form>
+        <div id="admin-media" class="mt-7 grid md:grid-cols-2 gap-4"></div>
+        <p id="admin-media-empty" class="hidden rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">Aucun média enregistré.</p>
+       </section>
+       <section id="panel-settings" class="admin-panel">
+        <h2 class="text-2xl font-extrabold text-slate-900">Paramètres d'affichage</h2>
+        <form id="settings-form" class="mt-6 max-w-2xl space-y-4">
+         <label class="flex items-center justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-5"><span><strong class="block text-slate-900">Afficher le profil</strong><span class="text-sm text-slate-500">Coordonnées et présentation sur le site public.</span></span><input id="show_profile" type="checkbox" class="w-5 h-5 accent-blue-600"></label> <label class="flex items-center justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-5"><span><strong class="block text-slate-900">Afficher les liens</strong><span class="text-sm text-slate-500">Les liens doivent aussi être activés individuellement.</span></span><input id="show_links" type="checkbox" class="w-5 h-5 accent-blue-600"></label> <label class="flex items-center justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-5"><span><strong class="block text-slate-900">Afficher la galerie médias</strong><span class="text-sm text-slate-500">Les médias doivent aussi être rendus visibles individuellement.</span></span><input id="show_media" type="checkbox" class="w-5 h-5 accent-blue-600"></label>
+         <div class="rounded-2xl border border-slate-200 bg-white p-5"><label for="theme" class="block font-bold text-slate-900">Thème</label><select id="theme" class="admin-input mt-3"><option value="light">Clair</option><option value="dark">Sombre</option></select>
+         </div><button data-template-id="save-settings-button" type="submit" class="canva-button rounded-xl px-5 py-3 font-bold text-white hover:bg-blue-700" style="background: rgb(37, 99, 235); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Enregistrer les paramètres</button>
+        </form>
+       </section>
+       <section id="panel-security" class="admin-panel">
+        <h2 class="text-2xl font-extrabold text-slate-900">Sécurité et démonstration</h2>
+        <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">
+         <div class="flex gap-3"><i data-lucide="triangle-alert" class="w-6 h-6 shrink-0" aria-hidden="true"></i>
+          <div>
+           <h3 class="font-extrabold">Important</h3>
+           <p class="mt-2 text-sm leading-6">Cette administration est une démonstration locale dans le navigateur. Les données sont conservées dans localStorage sur cet appareil. Un déploiement réel nécessite un serveur, une base de données, le hachage des mots de passe, des sessions sécurisées et une gestion d'autorisations côté serveur.</p>
+          </div>
+         </div>
+        </div>
+        <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5">
+         <h3 class="font-bold text-red-900">Zone de réinitialisation</h3>
+         <p class="mt-1 text-sm text-red-800">Supprime les modifications locales et restaure les données de démonstration.</p><button data-template-id="reset-button" type="button" class="canva-button mt-4 rounded-xl px-5 py-3 font-bold" onclick="askResetFirst()" style="background: rgb(254, 226, 226); color: rgb(153, 27, 27); font-weight: 700; font-style: normal; font-size: 16px;">Réinitialiser les données de démonstration</button>
+        </div>
+       </section>
+      </div>
+     </div>
+    </section>
+   </main>
+   <div id="toast" class="toast fixed bottom-5 left-1/2 z-50 max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-2xl" role="status" aria-live="polite"></div>
+   <div id="confirm-modal" class="modal-backdrop fixed inset-0 z-40 items-center justify-center bg-slate-950/50 p-4" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+     <h2 id="confirm-title" class="font-bold text-slate-900"></h2>
+     <p id="confirm-message" class="mt-2 text-sm leading-6 text-slate-600"></p>
+     <div class="mt-6 flex justify-end gap-3"><button data-template-id="cancel-confirm-button" type="button" class="canva-button rounded-xl px-4 py-2 font-bold" onclick="closeConfirm()" style="background: rgb(241, 245, 249); color: rgb(51, 65, 85); font-weight: 700; font-style: normal; font-size: 16px;">Annuler</button><button id="confirm-action" data-template-id="confirm-action-button" type="button" class="canva-button rounded-xl px-4 py-2 font-bold text-white" onclick="runConfirmation()" style="background: rgb(220, 38, 38); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;">Confirmer</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <style>
+.mc-section{font-family:'Work Sans',system-ui,sans-serif;max-width:1200px;margin:32px auto 0;padding:0 12px;}
+.mc-kicker{font-size:12.5px;font-weight:700;letter-spacing:.14em;color:#6d28d9;text-transform:uppercase;margin-bottom:6px;}
+.mc-title{font-size:28px;font-weight:800;color:#172554;margin-bottom:24px;}
+.mc-grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:20px;align-items:start;}
+@media (max-width:860px){.mc-grid{grid-template-columns:1fr;}}
+.mc-card{height:380px!important;background:rgba(255,255,255,.91);border:1px solid #dbe4f4;border-radius:24px;box-shadow:0 24px 48px -28px rgba(23,37,84,.22),0 6px 14px -8px rgba(23,37,84,.08);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .2s ease,box-shadow .2s ease;}
+.mc-card:hover{transform:translateY(-4px);box-shadow:0 32px 60px -24px rgba(37,99,235,.32),0 10px 18px -8px rgba(23,37,84,.1);}
+.mc-thumb{position:relative;height:170px;flex-shrink:0;overflow:hidden;background:linear-gradient(150deg,#dbe4ff 0%,#e6dcfb 100%);}
+.mc-sheen{position:absolute;top:-20%;left:-30%;width:45%;height:140%;background:linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.65) 50%,rgba(255,255,255,0) 100%);transform:skewX(-18deg);animation:mc-sheen-sweep 4.2s ease-in-out infinite;}
+@keyframes mc-sheen-sweep{0%{transform:translateX(-40%) skewX(-18deg);opacity:0;}12%{opacity:1;}45%{opacity:1;}62%{opacity:0;}100%{transform:translateX(340%) skewX(-18deg);opacity:0;}}
+.mc-live-badge{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:6px;background:rgba(23,37,84,.78);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px 5px 8px;border-radius:999px;}
+.mc-live-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:mc-pulse-dot 1.8s ease-in-out infinite;}
+@keyframes mc-pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6);}50%{box-shadow:0 0 0 5px rgba(34,197,94,0);}}
+.mc-dash{position:absolute;inset:14px;background:rgba(255,255,255,.92);border-radius:14px;padding:10px 12px;box-shadow:0 10px 24px -12px rgba(23,37,84,.25);display:flex;flex-direction:column;gap:7px;}
+.mc-row{display:flex;align-items:center;gap:8px;}
+.mc-bar{height:7px;border-radius:4px;background:#e2e8f0;flex:1;}
+.mc-pill{font-size:8.5px;font-weight:700;padding:2px 6px;border-radius:999px;flex-shrink:0;}
+.mc-body{flex:1;min-height:0;padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;overflow:hidden;}
+.mc-card-title{font-size:16px;font-weight:800;color:#172554;flex-shrink:0;}
+.mc-desc{font-size:13px;color:#475569;line-height:1.5;flex:1;min-height:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;}
+.mc-open{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#2563eb;flex-shrink:0;}
+.mc-soon{opacity:.6;border-style:dashed;}
+.mc-soon .mc-body{justify-content:center;align-items:center;text-align:center;}
+</style>
+  <section id="portfolio-section" class="mc-section">
+   <div class="mc-kicker">Portfolio</div>
+   <div class="mc-title">Mes créations</div>
+   <div class="mc-grid">
+    <a class="mc-card" href="https://tierspayant.site" target="_blank" rel="noopener noreferrer">
+     <div class="mc-thumb">
+      <div class="mc-sheen"></div>
+      <div class="mc-live-badge"><span class="mc-live-dot"></span> Démo en ligne</div>
+      <div class="mc-dash">
+       <div class="mc-row">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#6d28d9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 6-10 7L2 6"></path></svg>
+        <span style="font-size:11px;font-weight:700;color:#172554;">Boîte de réception</span>
+       </div>
+       <div class="mc-row"><span class="mc-pill" style="background:#dcfce7;color:#15803d;">Accord détecté</span><span class="mc-bar"></span></div>
+       <div class="mc-row"><span class="mc-pill" style="background:#fef9c3;color:#a16207;">En attente</span><span class="mc-bar" style="max-width:70%;"></span></div>
+       <div class="mc-row"><span class="mc-pill" style="background:#dcfce7;color:#15803d;">Accord détecté</span><span class="mc-bar" style="max-width:85%;"></span></div>
+      </div>
+     </div>
+     <div class="mc-body">
+      <div class="mc-card-title">tierspayant.site</div>
+      <div class="mc-desc">SaaS d'automatisation pour opticiens : détection automatique des accords de prise en charge tiers payant reçus par mail, classement et notification.</div>
+      <div class="mc-open">Ouvrir le site
+       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </div>
+     </div>
+    </a>
+    <div class="mc-card mc-soon">
+     <div class="mc-thumb" style="background:rgba(219,228,244,.5);display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+     </div>
+     <div class="mc-body">
+      <div class="mc-card-title" style="color:#64748b;">Bientôt</div>
+      <div class="mc-desc" style="color:#94a3b8;-webkit-line-clamp:2;">Nouveau projet en préparation.</div>
+     </div>
+    </div>
+    <div class="mc-card mc-soon">
+     <div class="mc-thumb" style="background:rgba(219,228,244,.5);display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+     </div>
+     <div class="mc-body">
+      <div class="mc-card-title" style="color:#64748b;">Bientôt</div>
+      <div class="mc-desc" style="color:#94a3b8;-webkit-line-clamp:2;">Nouveau projet en préparation.</div>
+     </div>
+    </div>
+   </div>
+  </section>
+  <script>
+    const STORE_KEY = "profil-connecte-fr-admin-v2";
+    const legacyKey = "profil-connecte-fr-v1";
+    const fallbackPhoto = "";
+    const demo = {
+      profile:{first_name:"Medy",last_name:"CAZAL",email:"cazal@medy.site",phone:"06 74 20 16 6 62",job_title:"Consultant RH et Digital",site_title:"Profil Connecté",bio:"J'accompagne les marques et les projets créatifs avec une communication claire, humaine et engagée.",photo_url:""},
+      links:[{id:"l1",label:"Mon site professionnel",url:"https://www.medy.site",type:"Site web",description:"Découvrez mes services",public:true}],
+      media:[{id:"m1",title:"Vue nocturne inspirante",description:"Un aperçu de mon univers créatif.",url:"",public:true}],
+      settings:{show_profile:true,show_links:true,show_media:true,theme:"light"},
+      meta:{last_saved:"",last_change:"Données de démonstration prêtes"}
+    };
+    let state, editLinkId=null, editMediaId=null, pendingAction=null, localFiles={};
+
+    const clone = value => JSON.parse(JSON.stringify(value));
+    const esc = value => String(value || "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
+    const nowLabel = () => new Intl.DateTimeFormat("fr-FR",{dateStyle:"medium",timeStyle:"short"}).format(new Date());
+
+    function migrate(raw) {
+      const base=clone(demo), old=raw || {};
+      const profile={...base.profile,...(old.profile||{})};
+      if(profile.email==="camille.martin@example.fr") profile.email="cazal@medy.site";
+      if(profile.job_title==="Consultante en communication") profile.job_title="Consultant RH et Digital";
+      if(profile.phone==="+33 6 12 34 56 78") profile.phone="06 74 20 16 6 62";
+      const links=(old.links||base.links).map((x,i)=>({id:x.id||"l"+Date.now()+i,label:x.label||"",url:(x.url||"")==="mailto:camille.martin@example.fr"?"mailto:cazal@medy.site":(x.url||"")==="https://example.com"&&x.label==="Mon site professionnel"?"https://www.medy.site":x.url||"",type:x.type||((x.url||"").startsWith("mailto:")?"E-mail":"Site web"),label:(x.url||"")==="mailto:cazal@medy.site"?"M'écrire un mail":x.label||"",description:x.description||"",public:x.public!==false}));
+      const media=(old.media||base.media).map((x,i)=>({id:x.id||"m"+Date.now()+i,title:x.title||"",description:x.description||"",url:x.url||"",public:x.public!==false}));
+      return {profile,links,media,settings:{...base.settings,...(old.settings||{})},meta:{...base.meta,...(old.meta||{})}};
+    }
+    function loadState() {
+      try {
+        const stored=localStorage.getItem(STORE_KEY), legacy=localStorage.getItem(legacyKey);
+        if(!stored && !legacy) {
+          const initial=clone(demo);
+          localStorage.setItem(STORE_KEY,JSON.stringify(initial));
+          return initial;
+        }
+        const migrated=migrate(JSON.parse(stored || legacy));
+        localStorage.setItem(STORE_KEY,JSON.stringify(migrated));
+        return migrated;
+      } catch(e) { return clone(demo); }
+    }
+    function saveState(change) {
+      state.meta.last_saved=nowLabel();
+      state.meta.last_change=change;
+      localStorage.setItem(STORE_KEY,JSON.stringify(state));
+      renderAll();
+    }
+    function notify(message,type="success") {
+      const toast=document.getElementById("toast");
+      toast.textContent=message;
+      toast.className="toast fixed bottom-5 left-1/2 z-50 max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-2xl "+(type==="error"?"bg-red-700":"bg-slate-900");
+      requestAnimationFrame(()=>toast.classList.add("show"));
+      clearTimeout(window.toastTimer);
+      window.toastTimer=setTimeout(()=>toast.classList.remove("show"),3600);
+    }
+    function normalURL(url) { return /^(https?:\/\/|mailto:|[a-z]+:\/\/)/i.test(url) ? url : "https://"+url; }
+    function validLink(url) { try { const u=new URL(normalURL(url)); return ["http:","https:","mailto:"].includes(u.protocol) || /^[a-z]+:\/\//i.test(url); } catch(e){ return false; } }
+    function youtubeId(url) { const match=String(url||"").match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/); return match ? match[1] : null; }
+
+    function showView(name) {
+      document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
+      document.getElementById(name+"-view").classList.add("active");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+    function openAdministration() {
+      showView("admin");
+      selectPanel("dashboard");
+      notify("Espace d'administration locale ouvert.");
+    }
+    function logoutLocal() { showView("public"); notify("Vous avez quitté l'administration locale."); }
+    function selectPanel(name) {
+      document.querySelectorAll(".admin-nav-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.panel===name));
+      document.querySelectorAll(".admin-panel").forEach(panel=>panel.classList.toggle("active",panel.id==="panel-"+name));
+      if(name==="profile") populateProfileForm();
+      if(name==="settings") populateSettingsForm();
+    }
+
+    function applyTheme() { document.body.dataset.theme=state.settings.theme; }
+    function renderPublic() {
+      const p=state.profile, settings=state.settings;
+      document.title=p.site_title || "Profil Connecté";
+      document.getElementById("brand-display").textContent=p.site_title;
+      const profile=document.getElementById("public-profile-section");
+      profile.classList.toggle("public-hidden",!settings.show_profile);
+      document.getElementById("public-name").textContent=p.first_name+" "+p.last_name;
+      document.getElementById("public-function").textContent=p.job_title;
+      document.getElementById("public-intro").textContent=p.bio||"";
+      const avatar=document.getElementById("public-avatar");
+      avatar.style.backgroundImage=`url("${(p.photo_url||fallbackPhoto).replace(/"/g,"%22")}")`;
+      const email=document.getElementById("public-email"), phone=document.getElementById("public-phone");
+      email.href="mailto:"+p.email; email.querySelector("span").textContent=p.email;
+      phone.href="tel:"+p.phone.replace(/\s/g,""); phone.querySelector("span").textContent=p.phone;
+
+      lucide.createIcons();
+    }
+    function makePublicMedia(item) {
+      const article=document.createElement("article");
+      article.className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm";
+      const source=localFiles[item.id]||item.url, video=youtubeId(source);
+      let visual=`<div class="grid aspect-[16/10] place-items-center bg-gradient-to-br from-blue-100 to-violet-100 text-violet-700"><i data-lucide="image" class="w-8 h-8"></i></div>`;
+      if(video) visual=`<div class="aspect-[16/10]"><iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/${video}" title="${esc(item.title)}" allowfullscreen></iframe></div>`;
+      else if(source) visual=`<div class="aspect-[16/10] bg-cover bg-center" style="background-image:url('${esc(source)}')"></div>`;
+      article.innerHTML=visual+`<div class="p-5"><h3 class="font-bold text-slate-900">${esc(item.title)}</h3><p class="mt-2 text-sm leading-6 text-slate-600">${esc(item.description)}</p></div>`;
+      return article;
+    }
+
+    function renderDashboard() {
+      document.getElementById("stat-profile").textContent=state.settings.show_profile ? "Visible" : "Masqué";
+      document.getElementById("stat-links").textContent=state.links.filter(x=>x.public).length;
+      document.getElementById("stat-media").textContent=state.media.filter(x=>x.public).length;
+      document.getElementById("site-status").innerHTML=`<span class="status-dot ${state.settings.show_profile||state.settings.show_links||state.settings.show_media?"bg-emerald-500":"bg-slate-400"}"></span>${state.settings.show_profile||state.settings.show_links||state.settings.show_media?"Site public actif":"Site public limité"}`;
+      document.getElementById("last-save").textContent=state.meta.last_saved||"Pas encore de sauvegarde";
+      document.getElementById("last-change").textContent=state.meta.last_change||"Aucune modification";
+    }
+    function populateProfileForm() { Object.entries(state.profile).forEach(([key,value])=>{ const field=document.getElementById(key); if(field) field.value=value||""; }); }
+    function populateSettingsForm() { ["show_profile","show_links","show_media"].forEach(key=>document.getElementById(key).checked=state.settings[key]); document.getElementById("theme").value=state.settings.theme; }
+    function badge(publicState) { return `<span class="rounded-full px-2.5 py-1 text-xs font-bold ${publicState?"bg-emerald-50 text-emerald-700":"bg-slate-100 text-slate-600"}">${publicState?"Actif":"Désactivé"}</span>`; }
+
+    function renderAdminLists() {
+      const links=document.getElementById("admin-links"); links.innerHTML="";
+      state.links.forEach(item=>{
+        const row=document.createElement("article"); row.className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-4";
+        row.innerHTML=`<div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><p class="font-bold text-slate-900">${esc(item.label)}</p>${badge(item.public)}<span class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">${esc(item.type)}</span></div><p class="mt-1 truncate text-sm text-slate-500">${esc(item.url)}</p>${item.description?`<p class="mt-1 text-xs text-slate-500">${esc(item.description)}</p>`:""}</div><button type="button" class="toggle-link rounded-lg bg-slate-100 px-3 py-2 text-sm font-bold text-slate-700">${item.public?"Désactiver":"Activer"}</button><button type="button" class="edit-link rounded-lg bg-indigo-50 px-3 py-2 text-sm font-bold text-indigo-700">Modifier</button><button type="button" class="delete-link rounded-lg bg-red-50 px-3 py-2 text-sm font-bold text-red-700">Supprimer</button>`;
+        row.querySelector(".toggle-link").onclick=()=>toggleItem("links",item.id);
+        row.querySelector(".edit-link").onclick=()=>editLink(item.id);
+        row.querySelector(".delete-link").onclick=()=>askDelete("links",item.id);
+        links.appendChild(row);
+      });
+      document.getElementById("admin-links-empty").classList.toggle("hidden",state.links.length>0);
+
+      const media=document.getElementById("admin-media"); media.innerHTML="";
+      state.media.forEach(item=>{
+        const source=localFiles[item.id]||item.url, isVideo=!!youtubeId(source);
+        const preview=source ? `<div class="h-24 w-28 shrink-0 rounded-xl bg-cover bg-center ${isVideo?"bg-violet-100":""}" style="${isVideo?"":"background-image:url('"+esc(source)+"')"}"><span class="grid h-full place-items-center text-violet-700">${isVideo?'<i data-lucide="play-circle" class="w-7 h-7"></i>':""}</span></div>`:`<div class="grid h-24 w-28 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-500"><i data-lucide="image" class="w-6 h-6"></i></div>`;
+        const card=document.createElement("article"); card.className="rounded-2xl border border-slate-200 bg-white p-4";
+        card.innerHTML=`<div class="flex gap-4">${preview}<div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><p class="font-bold text-slate-900">${esc(item.title)}</p>${badge(item.public)}<span class="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700">${isVideo?"YouTube":"Image"}</span></div><p class="mt-2 text-sm text-slate-500">${esc(item.description||"Sans description")}</p><div class="mt-4 flex flex-wrap gap-2"><button type="button" class="toggle-media rounded-lg bg-slate-100 px-3 py-2 text-sm font-bold text-slate-700">${item.public?"Désactiver":"Activer"}</button><button type="button" class="edit-media rounded-lg bg-indigo-50 px-3 py-2 text-sm font-bold text-indigo-700">Modifier</button><button type="button" class="delete-media rounded-lg bg-red-50 px-3 py-2 text-sm font-bold text-red-700">Supprimer</button></div></div></div>`;
+        card.querySelector(".toggle-media").onclick=()=>toggleItem("media",item.id);
+        card.querySelector(".edit-media").onclick=()=>editMedia(item.id);
+        card.querySelector(".delete-media").onclick=()=>askDelete("media",item.id);
+        media.appendChild(card);
+      });
+      document.getElementById("admin-media-empty").classList.toggle("hidden",state.media.length>0);
+      lucide.createIcons();
+    }
+    function renderAll() { applyTheme(); renderPublic(); renderDashboard(); renderAdminLists(); }
+    function toggleItem(collection,id) { const item=state[collection].find(x=>x.id===id); item.public=!item.public; saveState((collection==="links"?"Lien":"Média")+" "+(item.public?"activé":"désactivé")+"."); notify(item.public?"Élément activé.":"Élément désactivé."); }
+
+    function editLink(id) {
+      const item=state.links.find(x=>x.id===id); editLinkId=id;
+      link_label.value=item.label; link_url.value=item.url; link_type.value=item.type; link_description.value=item.description; link_public.checked=item.public;
+      document.querySelector('[data-template-id="save-link-button"]').textContent="Mettre à jour";
+      selectPanel("links"); link_label.focus();
+    }
+    function clearLink() { editLinkId=null; link_form.reset(); link_public.checked=true; document.querySelector('[data-template-id="save-link-button"]').textContent="Ajouter le lien"; }
+    function editMedia(id) {
+      const item=state.media.find(x=>x.id===id); editMediaId=id;
+      media_title.value=item.title; media_url.value=item.url||""; media_description.value=item.description||""; media_public.checked=item.public; media_file.value="";
+      document.querySelector('[data-template-id="save-media-button"]').textContent="Mettre à jour le média";
+      selectPanel("media"); media_title.focus();
+    }
+    function clearMedia() { editMediaId=null; media_form.reset(); media_public.checked=true; document.querySelector('[data-template-id="save-media-button"]').textContent="Ajouter le média"; }
+
+    function openConfirm(title,message,action,label="Confirmer") {
+      pendingAction=action; document.getElementById("confirm-title").textContent=title; document.getElementById("confirm-message").textContent=message;
+      document.getElementById("confirm-action").textContent=label; document.getElementById("confirm-modal").classList.add("open");
+      document.getElementById("confirm-action").focus();
+    }
+    function closeConfirm() { document.getElementById("confirm-modal").classList.remove("open"); pendingAction=null; }
+    function runConfirmation() { const action=pendingAction; closeConfirm(); if(action) action(); }
+    function askDelete(collection,id) { openConfirm("Supprimer cet élément ?", "Cette action supprime cet élément des données stockées dans ce navigateur.",()=>{ state[collection]=state[collection].filter(x=>x.id!==id); delete localFiles[id]; saveState("Élément supprimé."); notify("Élément supprimé."); },"Supprimer"); }
+    function askResetFirst() { openConfirm("Réinitialiser les données ?", "Toutes vos modifications locales seront remplacées. Une deuxième confirmation sera demandée.",()=>openConfirm("Confirmer la réinitialisation", "Confirmez-vous définitivement la restauration des données de démonstration ?",()=>{ state=clone(demo); localFiles={}; saveState("Données de démonstration restaurées."); populateProfileForm(); populateSettingsForm(); clearLink(); clearMedia(); notify("Les données de démonstration ont été restaurées."); },"Réinitialiser"),"Continuer"); }
+
+    document.addEventListener("DOMContentLoaded",()=>{
+      state=loadState();
+      const portfolioSection=document.getElementById("portfolio-section");
+      const publicContentGrid=document.getElementById("public-content-grid");
+      if(portfolioSection && publicContentGrid) publicContentGrid.appendChild(portfolioSection);
+      renderAll(); populateProfileForm(); populateSettingsForm();
+
+      let logoClicks=0, logoClickTimer;
+      document.getElementById("profil-logo").addEventListener("click",()=>{
+        logoClicks+=1;
+        clearTimeout(logoClickTimer);
+        if(logoClicks>=5){
+          logoClicks=0;
+          window.open("https://medy-site-backend.onrender.com","_blank","noopener,noreferrer");
+          return;
+        }
+        logoClickTimer=setTimeout(()=>{ logoClicks=0; },2000);
+      });
+
+      document.querySelectorAll(".admin-nav-btn").forEach(btn=>btn.addEventListener("click",()=>selectPanel(btn.dataset.panel)));
+
+      profile_form.addEventListener("submit",event=>{
+        event.preventDefault(); if(!profile_form.reportValidity()) return;
+        const photo=photo_url.value.trim();
+        if(photo && !/^https?:\/\//i.test(photo)) { notify("La photo doit utiliser une URL http:// ou https://.","error"); return; }
+        state.profile={first_name:first_name.value.trim(),last_name:last_name.value.trim(),email:email.value.trim(),phone:phone.value.trim(),job_title:job_title.value.trim(),site_title:site_title.value.trim(),bio:bio.value.trim(),photo_url:photo};
+        saveState("Profil mis à jour."); notify("Profil enregistré avec succès.");
+      });
+
+      link_form.addEventListener("submit",event=>{
+        event.preventDefault(); const url=link_url.value.trim();
+        if(!link_form.reportValidity() || !validLink(url)) { notify("Veuillez saisir une adresse de lien valide.","error"); return; }
+        const item={id:editLinkId||"l"+Date.now(),label:link_label.value.trim(),url:normalURL(url),type:link_type.value,description:link_description.value.trim(),public:link_public.checked};
+        if(editLinkId) state.links=state.links.map(x=>x.id===editLinkId?item:x); else state.links.push(item);
+        saveState(editLinkId?"Lien mis à jour.":"Lien ajouté."); notify(editLinkId?"Lien mis à jour.":"Lien ajouté."); clearLink();
+      });
+
+      media_form.addEventListener("submit",event=>{
+        event.preventDefault(); const file=media_file.files[0], url=media_url.value.trim();
+        if(!media_form.reportValidity() || (!url && !file)) { notify("Ajoutez une URL ou choisissez une image locale.","error"); return; }
+        if(url && !/^https?:\/\//i.test(url)) { notify("L'URL doit commencer par http:// ou https://.","error"); return; }
+        const id=editMediaId||"m"+Date.now(), item={id,title:media_title.value.trim(),description:media_description.value.trim(),url,public:media_public.checked};
+        if(file) { localFiles[id]=URL.createObjectURL(file); item.url=""; }
+        if(editMediaId) state.media=state.media.map(x=>x.id===editMediaId?item:x); else state.media.push(item);
+        saveState(editMediaId?"Média mis à jour.":"Média ajouté.");
+        notify(file?"Média ajouté pour cette session. Utilisez une URL pour le conserver durablement.":(editMediaId?"Média mis à jour.":"Média ajouté."));
+        clearMedia();
+      });
+
+      settings_form.addEventListener("submit",event=>{
+        event.preventDefault();
+        state.settings={show_profile:show_profile.checked,show_links:show_links.checked,show_media:show_media.checked,theme:theme.value};
+        saveState("Paramètres d'affichage mis à jour."); notify("Paramètres enregistrés.");
+      });
+
+      lucide.createIcons();
+    });
+  </script>
+
+</body></html>
