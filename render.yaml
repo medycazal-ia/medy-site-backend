@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: medy-site-backend
+    runtime: node
+    plan: free
+    buildCommand: cd web && npm install --include=dev && npm run build && cd ../server && npm install --include=dev && npm run build
+    startCommand: node server/dist/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: BRAND_NAME
+        value: medy.site
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true

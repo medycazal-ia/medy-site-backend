@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.env
+data/admins.json
+data/projects.json
+data/signups.json

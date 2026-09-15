@@ -1,0 +1,54 @@
+import type { Admin, Branding, Project, Signup } from "./types";
+
+let onUnauthorized: (() => void) | null = null;
+
+export function setUnauthorizedHandler(handler: () => void): void {
+  onUnauthorized = handler;
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`/api${path}`, {
+    ...init,
+    headers: { "content-type": "application/json", ...init?.headers },
+  });
+  if (res.status === 401) {
+    onUnauthorized?.();
+  }
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Erreur ${res.status}`);
+  }
+  if (res.status === 204) return undefined as T;
+  return res.json() as Promise<T>;
+}
+
+export const api = {
+  getConfig: () => request<{ branding: Branding }>("/config"),
+
+  login: (username: string, password: string) =>
+    request<{ ok: true; admin: Admin }>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    }),
+
+  logout: () => request<{ ok: true }>("/auth/logout", { method: "POST" }),
+
+  me: () => request<{ admin: Admin }>("/auth/me"),
+
+  updateProfile: (payload: { currentPassword: string; newUsername?: string; newPassword?: string }) =>
+    request<{ admin: Admin }>("/auth/profile", { method: "PATCH", body: JSON.stringify(payload) }),
+
+  listProjects: () => request<{ projects: Project[] }>("/projects/all"),
+
+  createProject: (payload: Partial<Project>) =>
+    request<{ project: Project }>("/projects", { method: "POST", body: JSON.stringify(payload) }),
+
+  updateProject: (id: string, payload: Partial<Project>) =>
+    request<{ project: Project }>(`/projects/${id}`, { method: "PATCH", body: JSON.stringify(payload) }),
+
+  deleteProject: (id: string) => request<undefined>(`/projects/${id}`, { method: "DELETE" }),
+
+  listSignups: () => request<{ signups: Signup[] }>("/signups"),
+
+  deleteSignup: (id: string) => request<undefined>(`/signups/${id}`, { method: "DELETE" }),
+};

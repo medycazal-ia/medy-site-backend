@@ -1,0 +1,107 @@
+# Mémoire du projet — medy-site-backend
+
+Contexte et historique de décisions pour ce dépôt. Complète `CLAUDE.md`
+(repère technique pour le code) et `README.md` (mode d'emploi) — ce
+fichier-ci répond à « pourquoi on en est là » plutôt qu'à « comment ça
+marche ».
+
+## Origine du projet
+
+Point de départ : ajouter à medy.site (site personnel Canva Sites de Medy
+Cazal, "Profil Connecté") un bouton "S'inscrire" et une section portfolio
+publique "Mes créations" mettant en avant tierspayant.site (le produit
+SaaS pour opticiens développé par ailleurs, dépôt séparé
+`medycazal-ia/tp-opt` — à ne jamais mélanger).
+
+Le site étant 100% statique (Canva Sites, aucune exécution de code
+serveur), deux besoins ne pouvaient pas être couverts par du
+`localStorage` seul : rendre la liste de projets modifiable sans retoucher
+le code du site, et capturer durablement les emails du formulaire
+d'inscription. D'où ce backend séparé, sur le même schéma que
+`tp-opt`/`vendor-admin` (GitHub + Render, Express + React, `render.yaml`).
+
+## État actuel
+
+- **Design du site** (partie visuelle statique) : canvas Claude Design
+  publié — en-tête avec bouton "S'inscrire", modale d'inscription
+  (`mailto:` temporaire), section "Mes créations" avec vignette animée
+  tierspayant.site (reflet lumineux CSS + badge "Démo en ligne" pulsant).
+  https://claude.ai/artifact/SVZ5nbm7ryCCgNDwyfcneC
+- **Backend** (ce dépôt) : scaffoldé en s'inspirant fidèlement de
+  `tp-opt`/`vendor-admin` (lu avec l'accord de l'utilisateur) — server/
+  Express + TypeScript (auth par cookie signé, un seul compte admin,
+  stores JSON), web/ React admin minimal (palette medy.site reprise).
+  **Pas encore déployé** : le dépôt GitHub distant n'a pas pu être créé
+  depuis cette session (limitation de la sandbox — impossible de créer un
+  nouveau dépôt via l'API GitHub, seuls les dépôts déjà attachés à la
+  session sont accessibles). Il faut que l'utilisateur crée le dépôt vide
+  côté GitHub (ou en donne un existant) pour que le code y soit poussé.
+- **Intégration site ↔ backend** : PAS ENCORE FAITE. Le canvas de design
+  actuel utilise encore des cartes codées en dur et un lien `mailto:` —
+  il faudra mettre à jour le JS collé dans l'éditeur Canva Code de
+  medy.site pour appeler `GET /api/projects` et `POST /api/signups` une
+  fois ce service déployé et son URL connue (voir `docs/DESIGN.md`).
+- **Bug signalé séparément** : l'utilisateur a signalé des « lignes de
+  code visibles en front-end » sur medy.site, jamais localisé précisément
+  (pas de capture reçue à ce sujet, accès réseau à medy.site et aux
+  domaines `*.canva.site` bloqué depuis cet environnement). Sans lien
+  avec ce backend a priori — à reprendre séparément dès qu'une capture
+  d'écran ou une description précise de l'emplacement est fournie.
+
+## Extension CRM (Airtable) — en cours
+
+L'utilisateur gérera aussi ses clients/prospects via ce backend : demande
+explicite d'utiliser **Airtable comme base de données** plutôt que les
+stores JSON initiaux, et d'étoffer le backend en conséquence (gestion
+clients/entreprises, projets avec médias, RDV avec transcription,
+audits, propositions commerciales et de paiement, feuille de route,
+messagerie intégrée WhatsApp/téléphone).
+
+Base Airtable créée (connecteur Airtable de la session, accès confirmé
+par l'utilisateur) : **"Medy CRM — Clients & Projets"**
+(`baseId: app2Zji7fTJLN9aAg`, workspace `wspLVIzmsoGI5EX6X`). Tables :
+
+- `Entreprises` (`tblpEujw8ooTys4gR`)
+- `Contacts` (`tblzSO9AFG0iXtniC`) — lié à Entreprises
+- `Projets` (`tblhQvfZA34CEVJNd`) — lié à Entreprises + Contacts ; inclut
+  description, budget, images, vidéos, statut (Prospect → Terminé/Perdu)
+- `Rendez-vous` (`tblUZwh49iKF21h32`) — audio/visio/téléphone/présentiel,
+  enregistrement (pièce jointe), transcription, compte-rendu
+- `Audits` (`tblnRhZ8Nv651RfBF`) — constats, recommandations, documents
+- `Propositions commerciales` (`tbluYQjd8iycyd0Dd`)
+- `Paiements` (`tbl4eDaOz4ZsJq5l9`) — échéancier, statut, méthode
+- `Feuille de route` (`tblE4Kx2dcmSwvTzq`) — étapes de planning par projet
+- `Messages` (`tblrq9kbTPKWQ1M9j`) — journal WhatsApp/SMS/email/téléphone,
+  alimenté par les futurs connecteurs de messagerie
+
+**Pas encore fait** :
+- Le serveur Express (`server/`) ne parle pas encore à Airtable — il
+  faut soit migrer `db.ts` vers l'API Airtable (via le connecteur MCP
+  Airtable pour le développement, et la clé API Airtable côté serveur en
+  prod), soit clarifier si l'admin React doit parler directement à
+  Airtable (plus simple mais expose la clé API côté client — à éviter :
+  mieux vaut garder Express comme proxy qui détient la clé Airtable
+  côté serveur uniquement).
+- Connecteurs messagerie/téléphonie/visio/transcription/paiement
+  proposés à l'utilisateur (voir conversation) mais aucun compte/API key
+  fourni pour l'instant : WhatsApp+SMS+téléphone (Twilio), visio
+  (Daily.co), transcription (AssemblyAI ou Whisper API), paiement
+  (Stripe). Rien de fonctionnel tant que ces comptes ne sont pas créés
+  et les clés API données.
+
+## Décisions notables
+
+- **Un seul rôle admin**, pas de distinction admin/lecture-seule comme
+  dans `tp-opt` : ce n'est pas un produit multi-tenant, seul Medy gère ce
+  site — le modèle `vendor-admin` (un seul compte) était le bon calque.
+- **Auth par routes plutôt que par montage de routeur** : contrairement à
+  `tp-opt`/`vendor-admin` qui protègent des routeurs entiers avec
+  `requireAuth`, ici `GET /api/projects` et `POST /api/signups` doivent
+  rester publics alors que leurs routes soeurs (CRUD projets, liste des
+  inscriptions) sont protégées — `requireAuth` est donc posé route par
+  route.
+- **CORS ouvert sans credentials** : nécessaire pour que medy.site (autre
+  domaine) puisse appeler `/api/projects` et `/api/signups` en JS
+  cross-origin ; les routes admin restent protégées par cookie, servies
+  en same-origin en prod (l'admin `web/` est buildé et servi par le même
+  service Express), donc pas besoin d'un CORS à credentials.
