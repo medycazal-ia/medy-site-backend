@@ -21,12 +21,13 @@ It has since grown into Medy's **client/CRM backend** too: `/api/crm/*`
 proposals, payments, roadmap steps, messages) — all admin-only, all
 stored in **Airtable**, not JSON files. See "CRM / Airtable" below.
 
-A small React admin app (`web/`) lets Medy manage the public portfolio
-and signups (add/edit/delete projects, view/delete signups) behind a
-single admin login. It does not yet have UI for the CRM resources
-(Airtable's own interface is used for those today — see `.memory`). See
-`docs/DESIGN.md` for the full rationale and `README.md` for setup/
-deployment.
+The React admin app (`web/`) covers all of it behind a single admin
+login: the public portfolio and signups, the 9 CRM resources (generic
+schema-driven CRUD — see "CRM admin UI" below), and a Twilio composer
+(send SMS/WhatsApp, click-to-call) on the Messages tab. Medy can still
+use Airtable's own interface directly if that's ever more convenient
+(nothing here requires going through this UI). See `docs/DESIGN.md` for
+the full rationale and `README.md` for setup/deployment.
 
 Live deployment: not yet deployed (Render free tier once created —
 `render.yaml` at repo root is the blueprint; see README).
@@ -140,6 +141,43 @@ records directly in Airtable's own UI, not just through this API.
   hits real Airtable (no key available in CI/this environment); verify
   manually against the live base once `AIRTABLE_API_KEY` is set.
 
+## CRM admin UI (`web/src/crm/`)
+
+The 9 CRM resources share an identical CRUD shape server-side
+(`createCrudRouter`); the admin UI mirrors that with a single generic
+page instead of 9 near-duplicate React files:
+
+- `crm/schema.ts` — the only place that knows each resource's fields,
+  types (`text`/`textarea`/`number`/`date`/`datetime`/`select`/`link`/
+  `attachments`), select options, and which other resource a `link`
+  field points to (`RESOURCES`, `RESOURCE_ORDER`). Adding a 10th CRM
+  resource server-side means adding one entry here — no new component.
+- `crm/CrmResourcePage.tsx` — given a `resourceKey`, fetches that
+  resource's list AND every resource its `link` fields point to (to
+  resolve IDs to readable labels), then renders a form (add/edit) and a
+  table from the schema alone. `link` fields render as toggleable chips
+  picked from the target resource's live list; `attachments` fields
+  accept a URL (+ optional filename) since there's no upload endpoint —
+  matches `writeAttachments` server-side, which fetches from a URL too.
+- `crm/MessageComposer.tsx` — sits above the Messages resource table
+  only, sends real SMS/WhatsApp/calls through `/api/twilio/*` (distinct
+  from the generic CRUD form below it, which just edits `Messages` rows
+  directly without sending anything — useful for logging a call made
+  outside Twilio, e.g. from a personal phone).
+- `App.tsx` nests two tab levels: `Portfolio du site` (existing
+  Projects/Signups pages, untouched) vs `Clients` (the 9 CRM tabs from
+  `RESOURCE_ORDER`). Switching CRM tabs remounts `CrmResourcePage` (React
+  `key`) rather than trying to reset its internal state by hand.
+- Degrades visibly, not silently: with no `AIRTABLE_API_KEY` (or no
+  `TWILIO_*`), every CRM tab still renders its full form and an empty
+  table, with the server's `HttpError` message shown in the usual
+  `.error-banner` — verified by hand (Puppeteer + a local build) since
+  this has no automated test of its own; screenshots weren't kept, but
+  re-run the same check after any change here (start `server/dist` with
+  no `AIRTABLE_API_KEY`/`TWILIO_*`, log in, click through all tabs) if
+  you touch this code — a raw stack trace or blank tab means something
+  broke silently.
+
 ## Messagerie / téléphonie (Twilio)
 
 `server/src/twilio/` wraps the official `twilio` SDK. Nothing here talks
@@ -190,9 +228,6 @@ of failing obscurely.
   deployed).
 - `AIRTABLE_API_KEY` not yet generated/set anywhere — `/api/crm/*` will
   500 until it is (see `.env.example`).
-- No admin UI for the 9 CRM resources, nor for sending Twilio
-  messages/calls — Medy uses Airtable's own interface for CRM data; the
-  Twilio routes have no UI at all yet (call them directly, or build one).
 - All `TWILIO_*` env vars unset — nothing in `server/src/twilio/` can run
   until Medy creates a Twilio account and hands over Account
   SID/Auth Token/a phone number (see `.env.example` for exactly what's

@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
 import { api, setUnauthorizedHandler } from "./api";
+import { CrmResourcePage } from "./crm/CrmResourcePage";
+import { MessageComposer } from "./crm/MessageComposer";
+import { RESOURCE_ORDER, RESOURCES, type ResourceKey } from "./crm/schema";
 import { Login } from "./pages/Login";
 import { Projects } from "./pages/Projects";
 import { Signups } from "./pages/Signups";
 import type { Admin } from "./types";
 
-type Tab = "projects" | "signups";
+type Section = "portfolio" | "crm";
+type PortfolioTab = "projects" | "signups";
 
 export function App() {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<Tab>("projects");
+  const [section, setSection] = useState<Section>("portfolio");
+  const [portfolioTab, setPortfolioTab] = useState<PortfolioTab>("projects");
+  const [crmTab, setCrmTab] = useState<ResourceKey>("companies");
+  const [messagesRefresh, setMessagesRefresh] = useState(0);
 
   useEffect(() => {
     setUnauthorizedHandler(() => setAdmin(null));
@@ -42,21 +49,49 @@ export function App() {
       </div>
 
       <div className="tabs">
-        <button
-          className={`tab-button ${tab === "projects" ? "active" : ""}`}
-          onClick={() => setTab("projects")}
-        >
-          Mes créations
+        <button className={`tab-button ${section === "portfolio" ? "active" : ""}`} onClick={() => setSection("portfolio")}>
+          Portfolio du site
         </button>
-        <button
-          className={`tab-button ${tab === "signups" ? "active" : ""}`}
-          onClick={() => setTab("signups")}
-        >
-          Inscriptions
+        <button className={`tab-button ${section === "crm" ? "active" : ""}`} onClick={() => setSection("crm")}>
+          Clients
         </button>
       </div>
 
-      {tab === "projects" ? <Projects /> : <Signups />}
+      {section === "portfolio" && (
+        <>
+          <div className="tabs subtabs">
+            <button
+              className={`tab-button ${portfolioTab === "projects" ? "active" : ""}`}
+              onClick={() => setPortfolioTab("projects")}
+            >
+              Mes créations
+            </button>
+            <button
+              className={`tab-button ${portfolioTab === "signups" ? "active" : ""}`}
+              onClick={() => setPortfolioTab("signups")}
+            >
+              Inscriptions
+            </button>
+          </div>
+          {portfolioTab === "projects" ? <Projects /> : <Signups />}
+        </>
+      )}
+
+      {section === "crm" && (
+        <>
+          <div className="tabs subtabs">
+            {RESOURCE_ORDER.map((key) => (
+              <button key={key} className={`tab-button ${crmTab === key ? "active" : ""}`} onClick={() => setCrmTab(key)}>
+                {RESOURCES[key].label}
+              </button>
+            ))}
+          </div>
+          {crmTab === "messages" && (
+            <MessageComposer onSent={() => setMessagesRefresh((n) => n + 1)} />
+          )}
+          <CrmResourcePage resourceKey={crmTab} key={crmTab === "messages" ? `messages-${messagesRefresh}` : crmTab} />
+        </>
+      )}
     </div>
   );
 }

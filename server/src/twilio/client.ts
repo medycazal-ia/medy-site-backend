@@ -51,4 +51,8 @@ export async function initiateClickToCall(to: string) {
   });
 }
 
-export { validateRequest } from "twilio";
+// `twilio` est un module CommonJS : Node ne peut pas garantir statiquement
+// que "validateRequest" existe comme export nommé, donc on repasse par
+// l'export par défaut plutôt qu'un `export { validateRequest } from "twilio"`
+// (qui compile avec tsc mais casse à l'exécution — vu en testant l'app).
+export const validateRequest = twilioSdk.validateRequest;

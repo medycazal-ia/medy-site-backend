@@ -22,6 +22,12 @@ variable d'env `AIRTABLE_API_KEY`. Sans cette clé, ces routes répondent
 une erreur 500 — le reste du site (portfolio, inscriptions) fonctionne
 normalement.
 
+L'interface d'administration (`web/`) inclut un onglet **Clients** avec
+un sous-onglet par ressource (Entreprises, Contacts, Projets, RDV,
+Audits, Propositions, Paiements, Feuille de route, Messages) : formulaire
+d'ajout/modification, tableau, suppression, et sélection des liens
+(entreprise d'un contact, projet d'un RDV, etc.) par simple clic.
+
 ## Messagerie & téléphonie (Twilio)
 
 `/api/twilio/messages` (SMS + WhatsApp) et `/api/twilio/call`

@@ -52,3 +52,42 @@ export const api = {
 
   deleteSignup: (id: string) => request<undefined>(`/signups/${id}`, { method: "DELETE" }),
 };
+
+// --- CRM (Airtable) : générique, les 9 ressources ont la même forme REST ---
+
+export const crmApi = {
+  list: (resourcePath: string) => request<Record<string, unknown[]>>(`/crm/${resourcePath}`),
+
+  create: (resourcePath: string, data: Record<string, unknown>) =>
+    request<Record<string, unknown>>(`/crm/${resourcePath}`, { method: "POST", body: JSON.stringify(data) }),
+
+  update: (resourcePath: string, id: string, data: Record<string, unknown>) =>
+    request<Record<string, unknown>>(`/crm/${resourcePath}/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  remove: (resourcePath: string, id: string) =>
+    request<undefined>(`/crm/${resourcePath}/${id}`, { method: "DELETE" }),
+};
+
+// --- Messagerie/téléphonie (Twilio) ---
+
+export const twilioApi = {
+  sendMessage: (payload: {
+    channel: "sms" | "whatsapp";
+    to: string;
+    body: string;
+    contactId?: string;
+    projectId?: string;
+  }) => request<{ message: Record<string, unknown> }>("/twilio/messages", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }),
+
+  call: (payload: { to: string; contactId?: string; projectId?: string }) =>
+    request<{ callSid: string; status: string }>("/twilio/call", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};

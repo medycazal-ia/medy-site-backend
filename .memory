@@ -48,10 +48,6 @@ d'inscription. D'où ce backend séparé, sur le même schéma que
   401 sans session sur les 9 ressources + tests unitaires du mapping des
   pièces jointes/liens — pas de test d'intégration réel contre Airtable
   (pas de clé API disponible dans cet environnement).
-  **Pas d'interface d'admin React pour ces 9 ressources** : l'utilisateur
-  utilise Airtable directement pour l'instant (c'est justement pourquoi
-  il a demandé Airtable plutôt qu'un store JSON). À reconsidérer si
-  medy.site doit un jour lire/écrire ces données lui-même.
   **`AIRTABLE_API_KEY` pas encore généré/fourni** — `/api/crm/*` répond
   500 tant que ce n'est pas fait.
 - **Twilio** (SMS/WhatsApp/clic-pour-appeler) : demandé par l'utilisateur
@@ -71,6 +67,23 @@ d'inscription. D'où ce backend séparé, sur le même schéma que
   numéro variant trop pour une correspondance exacte fiable).
   **Toutes les variables `TWILIO_*` sont vides** — rien de fonctionnel
   tant que l'utilisateur n'a pas créé son compte Twilio.
+- **Interface d'admin CRM** : demandée explicitement ensuite ("créer la
+  page frontend... avec les onglets cliquables et les emplacements des
+  données"). Construite en `web/src/crm/` : un seul composant générique
+  piloté par un schéma déclaratif (`schema.ts`) plutôt que 9 pages
+  quasi identiques — les 9 ressources partagent la même forme CRUD côté
+  serveur, donc côté UI aussi. Navigation à deux niveaux dans `App.tsx`
+  ("Portfolio du site" vs "Clients" + 9 sous-onglets). Onglet Messages :
+  composeur Twilio (envoi réel) au-dessus du tableau/formulaire CRUD
+  classique (édition directe des lignes Airtable, sans envoi réel).
+  **Vérifié dans un vrai navigateur** (Puppeteer + build local, sans
+  `AIRTABLE_API_KEY`/`TWILIO_*`) : navigation, formulaires, tableaux et
+  messages d'erreur s'affichent proprement en mode dégradé — a permis de
+  trouver et corriger un vrai bug d'exécution (`export { validateRequest }
+  from "twilio"` compilait avec tsc mais plantait Node au démarrage réel,
+  le module `twilio` étant CommonJS ; les tests vitest ne l'auraient
+  jamais détecté car ils transpilent différemment). Aussi corrigé : un
+  accord grammatical bancal ("Aucun entreprises") repéré sur une capture.
 - **Intégration site ↔ backend** : PAS ENCORE FAITE. Le canvas de design
   actuel utilise encore des cartes codées en dur et un lien `mailto:` —
   il faudra mettre à jour le JS collé dans l'éditeur Canva Code de
