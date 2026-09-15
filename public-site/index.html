@@ -338,6 +338,9 @@
     const clone = value => JSON.parse(JSON.stringify(value));
     const esc = value => String(value || "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
     const nowLabel = () => new Intl.DateTimeFormat("fr-FR",{dateStyle:"medium",timeStyle:"short"}).format(new Date());
+    // lucide vient d'un CDN externe : s'il n'a pas eu le temps de charger (réseau
+    // lent, bloqueur), ne doit jamais faire planter le reste du script.
+    function safeLucide() { if (typeof lucide !== "undefined") lucide.createIcons(); }
 
     function migrate(raw) {
       const base=clone(demo), old=raw || {};
@@ -414,7 +417,7 @@
       email.href="mailto:"+p.email; email.querySelector("span").textContent=p.email;
       phone.href="tel:"+p.phone.replace(/\s/g,""); phone.querySelector("span").textContent=p.phone;
 
-      lucide.createIcons();
+      safeLucide();
     }
     function makePublicMedia(item) {
       const article=document.createElement("article");
@@ -463,7 +466,7 @@
         media.appendChild(card);
       });
       document.getElementById("admin-media-empty").classList.toggle("hidden",state.media.length>0);
-      lucide.createIcons();
+      safeLucide();
     }
     function renderAll() { applyTheme(); renderPublic(); renderDashboard(); renderAdminLists(); }
     function toggleItem(collection,id) { const item=state[collection].find(x=>x.id===id); item.public=!item.public; saveState((collection==="links"?"Lien":"Média")+" "+(item.public?"activé":"désactivé")+"."); notify(item.public?"Élément activé.":"Élément désactivé."); }
@@ -494,12 +497,10 @@
     function askResetFirst() { openConfirm("Réinitialiser les données ?", "Toutes vos modifications locales seront remplacées. Une deuxième confirmation sera demandée.",()=>openConfirm("Confirmer la réinitialisation", "Confirmez-vous définitivement la restauration des données de démonstration ?",()=>{ state=clone(demo); localFiles={}; saveState("Données de démonstration restaurées."); populateProfileForm(); populateSettingsForm(); clearLink(); clearMedia(); notify("Les données de démonstration ont été restaurées."); },"Réinitialiser"),"Continuer"); }
 
     document.addEventListener("DOMContentLoaded",()=>{
-      state=loadState();
-      const portfolioSection=document.getElementById("portfolio-section");
-      const publicContentGrid=document.getElementById("public-content-grid");
-      if(portfolioSection && publicContentGrid) publicContentGrid.appendChild(portfolioSection);
-      renderAll(); populateProfileForm(); populateSettingsForm();
-
+      // Enregistré en tout premier, avant tout code pouvant lever une
+      // exception (ex. lucide.createIcons() si le CDN n'a pas chargé) :
+      // un plantage plus bas dans ce bloc ne doit jamais empêcher le clic
+      // caché de fonctionner.
       let logoClicks=0, logoClickTimer;
       document.getElementById("profil-logo").addEventListener("click",()=>{
         logoClicks+=1;
@@ -511,6 +512,21 @@
         }
         logoClickTimer=setTimeout(()=>{ logoClicks=0; },2000);
       });
+
+      // Ces 4 <form> ont un id avec des tirets (ex. "profile-form"), invalide
+      // comme nom de variable JS : contrairement aux champs individuels
+      // (ex. #first_name), ils ne sont pas accessibles en global implicite,
+      // d'où ces déclarations explicites avant tout usage plus bas.
+      const profile_form=document.getElementById("profile-form");
+      const link_form=document.getElementById("link-form");
+      const media_form=document.getElementById("media-form");
+      const settings_form=document.getElementById("settings-form");
+
+      state=loadState();
+      const portfolioSection=document.getElementById("portfolio-section");
+      const publicContentGrid=document.getElementById("public-content-grid");
+      if(portfolioSection && publicContentGrid) publicContentGrid.appendChild(portfolioSection);
+      renderAll(); populateProfileForm(); populateSettingsForm();
 
       document.querySelectorAll(".admin-nav-btn").forEach(btn=>btn.addEventListener("click",()=>selectPanel(btn.dataset.panel)));
 
@@ -548,7 +564,7 @@
         saveState("Paramètres d'affichage mis à jour."); notify("Paramètres enregistrés.");
       });
 
-      lucide.createIcons();
+      safeLucide();
     });
   </script>
 
