@@ -19,7 +19,6 @@
     .view.active { display:block; }
     .avatar { background-position:center; background-size:cover; width:6rem; height:6rem; }
     input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible { outline:3px solid rgba(99,102,241,.48); outline-offset:3px; }
-    .public-hidden { display:none!important; }
     .public-content-grid { display:contents; }
     .public-layout-grid { display:grid; grid-template-columns:minmax(250px, 300px) minmax(0, 1fr); gap:1.25rem; align-items:stretch; }
     #public-profile-section { grid-column:1; grid-row:1; min-width:0; width:100%; display:flex; flex-direction:column; }
@@ -46,6 +45,7 @@
    </header>
    <main class="w-full px-4 sm:px-8 pb-16">
     <section id="public-view" class="view active max-w-6xl mx-auto">
+     <h2 class="text-center text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-8">IA et toute la compagnie Digitale nos amis</h2>
      <div class="public-layout-grid">
       <aside id="public-profile-section" class="glass-card rounded-3xl p-6 sm:p-7 overflow-hidden relative">
        <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-600 to-violet-600"></div>
@@ -146,60 +146,46 @@
    </div>
   </section>
   <script>
-    const STORE_KEY = "profil-connecte-fr-admin-v2";
-    const legacyKey = "profil-connecte-fr-v1";
-    const fallbackPhoto = "";
-    const demo = {
-      profile:{first_name:"Medy",last_name:"CAZAL",email:"cazal@medy.site",phone:"06 74 20 16 6 62",job_title:"Consultant RH et Digital",site_title:"Profil Connecté",bio:"J'accompagne les marques et les projets créatifs avec une communication claire, humaine et engagée.",photo_url:""},
-      links:[{id:"l1",label:"Mon site professionnel",url:"https://www.medy.site",type:"Site web",description:"Découvrez mes services",public:true}],
-      media:[{id:"m1",title:"Vue nocturne inspirante",description:"Un aperçu de mon univers créatif.",url:"",public:true}],
-      settings:{show_profile:true,show_links:true,show_media:true,theme:"light"},
-      meta:{last_saved:"",last_change:"Données de démonstration prêtes"}
+    // Valeurs de secours si /api/profile est injoignable (service en veille,
+    // hors-ligne) — reprend le profil par défaut du backend.
+    const DEFAULT_PROFILE = {
+      firstName:"Medy",lastName:"CAZAL",email:"cazal@medy.site",phone:"06 74 20 16 6 62",
+      jobTitle:"Consultant RH et Digital",siteTitle:"Profil Connecté",
+      bio:"J'accompagne les marques et les projets créatifs avec une communication claire, humaine et engagée.",
+      photoUrl:""
     };
-    let state;
+    let profile = DEFAULT_PROFILE;
 
-    const clone = value => JSON.parse(JSON.stringify(value));
     // lucide vient d'un CDN externe : s'il n'a pas eu le temps de charger (réseau
     // lent, bloqueur), ne doit jamais faire planter le reste du script.
     function safeLucide() { if (typeof lucide !== "undefined") lucide.createIcons(); }
 
-    function migrate(raw) {
-      const base=clone(demo), old=raw || {};
-      const profile={...base.profile,...(old.profile||{})};
-      if(profile.email==="camille.martin@example.fr") profile.email="cazal@medy.site";
-      if(profile.job_title==="Consultante en communication") profile.job_title="Consultant RH et Digital";
-      if(profile.phone==="+33 6 12 34 56 78") profile.phone="06 74 20 16 6 62";
-      const links=(old.links||base.links).map((x,i)=>({id:x.id||"l"+Date.now()+i,label:x.label||"",url:(x.url||"")==="mailto:camille.martin@example.fr"?"mailto:cazal@medy.site":(x.url||"")==="https://example.com"&&x.label==="Mon site professionnel"?"https://www.medy.site":x.url||"",type:x.type||((x.url||"").startsWith("mailto:")?"E-mail":"Site web"),label:(x.url||"")==="mailto:cazal@medy.site"?"M'écrire un mail":x.label||"",description:x.description||"",public:x.public!==false}));
-      const media=(old.media||base.media).map((x,i)=>({id:x.id||"m"+Date.now()+i,title:x.title||"",description:x.description||"",url:x.url||"",public:x.public!==false}));
-      return {profile,links,media,settings:{...base.settings,...(old.settings||{})},meta:{...base.meta,...(old.meta||{})}};
-    }
-    function loadState() {
-      try {
-        const stored=localStorage.getItem(STORE_KEY), legacy=localStorage.getItem(legacyKey);
-        if(!stored && !legacy) return clone(demo);
-        return migrate(JSON.parse(stored || legacy));
-      } catch(e) { return clone(demo); }
-    }
-
-    function applyTheme() { document.body.dataset.theme=state.settings.theme; }
     function renderPublic() {
-      const p=state.profile, settings=state.settings;
-      document.title=p.site_title || "Profil Connecté";
-      document.getElementById("brand-display").textContent=p.site_title;
-      const profile=document.getElementById("public-profile-section");
-      profile.classList.toggle("public-hidden",!settings.show_profile);
-      document.getElementById("public-name").textContent=p.first_name+" "+p.last_name;
-      document.getElementById("public-function").textContent=p.job_title;
+      const p=profile;
+      document.title=p.siteTitle || "Profil Connecté";
+      document.getElementById("brand-display").textContent=p.siteTitle;
+      document.getElementById("public-name").textContent=p.firstName+" "+p.lastName;
+      document.getElementById("public-function").textContent=p.jobTitle;
       document.getElementById("public-intro").textContent=p.bio||"";
       const avatar=document.getElementById("public-avatar");
-      avatar.style.backgroundImage=`url("${(p.photo_url||fallbackPhoto).replace(/"/g,"%22")}")`;
+      avatar.src=p.photoUrl||"avatar.jpg";
       const email=document.getElementById("public-email"), phone=document.getElementById("public-phone");
       email.href="mailto:"+p.email; email.querySelector("span").textContent=p.email;
       phone.href="tel:"+p.phone.replace(/\s/g,""); phone.querySelector("span").textContent=p.phone;
 
       safeLucide();
     }
-    function renderAll() { applyTheme(); renderPublic(); }
+    async function loadProfile() {
+      try {
+        const res=await fetch("/api/profile");
+        if(!res.ok) throw new Error("Réponse invalide");
+        const data=await res.json();
+        profile={...DEFAULT_PROFILE,...data.profile};
+      } catch(e) {
+        profile=DEFAULT_PROFILE;
+      }
+      renderPublic();
+    }
 
     document.addEventListener("DOMContentLoaded",()=>{
       // Enregistré en tout premier, avant tout code pouvant lever une
@@ -218,11 +204,10 @@
         logoClickTimer=setTimeout(()=>{ logoClicks=0; },2000);
       });
 
-      state=loadState();
       const portfolioSection=document.getElementById("portfolio-section");
       const publicContentGrid=document.getElementById("public-content-grid");
       if(portfolioSection && publicContentGrid) publicContentGrid.appendChild(portfolioSection);
-      renderAll();
+      loadProfile();
     });
   </script>
 

@@ -4,18 +4,19 @@ import { CrmResourcePage } from "./crm/CrmResourcePage";
 import { MessageComposer } from "./crm/MessageComposer";
 import { RESOURCE_ORDER, RESOURCES, type ResourceKey } from "./crm/schema";
 import { Login } from "./pages/Login";
+import { Profile } from "./pages/Profile";
 import { Projects } from "./pages/Projects";
 import { Signups } from "./pages/Signups";
 import type { Admin } from "./types";
 
 type Section = "portfolio" | "crm";
-type PortfolioTab = "projects" | "signups";
+type PortfolioTab = "profile" | "projects" | "signups";
 
 export function App() {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [checking, setChecking] = useState(true);
   const [section, setSection] = useState<Section>("portfolio");
-  const [portfolioTab, setPortfolioTab] = useState<PortfolioTab>("projects");
+  const [portfolioTab, setPortfolioTab] = useState<PortfolioTab>("profile");
   const [crmTab, setCrmTab] = useState<ResourceKey>("companies");
   const [messagesRefresh, setMessagesRefresh] = useState(0);
 
@@ -61,6 +62,12 @@ export function App() {
         <>
           <div className="tabs subtabs">
             <button
+              className={`tab-button ${portfolioTab === "profile" ? "active" : ""}`}
+              onClick={() => setPortfolioTab("profile")}
+            >
+              Mon profil
+            </button>
+            <button
               className={`tab-button ${portfolioTab === "projects" ? "active" : ""}`}
               onClick={() => setPortfolioTab("projects")}
             >
@@ -73,7 +80,9 @@ export function App() {
               Inscriptions
             </button>
           </div>
-          {portfolioTab === "projects" ? <Projects /> : <Signups />}
+          {portfolioTab === "profile" && <Profile />}
+          {portfolioTab === "projects" && <Projects />}
+          {portfolioTab === "signups" && <Signups />}
         </>
       )}
 

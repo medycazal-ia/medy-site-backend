@@ -18,11 +18,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Any other host** (`medy-site-backend.onrender.com`, `localhost`, ...)
   → the React admin app (`web/dist`), behind a login. This is what the
   hidden 5-click trigger on the public site's logo opens in a new tab.
-- **`/api/*`** (any host) → the API: `GET /api/projects` / `POST
-  /api/signups` (public — support the portfolio/signup pieces of
-  `public-site/index.html`, though that page doesn't actually call them
-  yet, see "Not yet done"), `/api/crm/*` (admin-only, Airtable-backed
-  CRM), `/api/twilio/*` (admin-only sends + public signature-verified
+- **`/api/*`** (any host) → the API: `GET /api/profile` (public — fetched
+  by `public-site/index.html` on load to render the profile card) / `PUT
+  /api/profile` (admin-only), `GET /api/projects` / `POST /api/signups`
+  (public — support the portfolio/signup pieces of `public-site/index.html`,
+  though that page doesn't actually call the projects one yet, see "Not
+  yet done"), `/api/crm/*` (admin-only, Airtable-backed CRM),
+  `/api/twilio/*` (admin-only sends + public signature-verified
   webhooks).
 
 The React admin app (`web/`) covers portfolio/signups management, the 9
@@ -51,9 +53,13 @@ before touching real DNS.
 `public-site/index.html` is a **complete, self-contained page** — no
 build step, no dependency on `server/` or `web/` beyond being served by
 the same process. Treat edits to it as editing a static asset, not
-application code: it has its own `<style>`/`<script>` blocks and its own
-`localStorage`-based state management (`STORE_KEY`), copied over as-is
-from what was extracted out of Canva Code (see `.memory`). Its one image,
+application code: it has its own `<style>`/`<script>` blocks, copied
+over as-is from what was extracted out of Canva Code (see `.memory`).
+The profile card's data comes from `GET /api/profile` (see "Profil
+public" below); there is no more `localStorage`-based local admin panel
+— it existed early on but only ever wrote to the visiting browser's own
+storage, never to anything other visitors could see, so it was removed
+rather than fixed (see `.memory`). Its one image,
 `public-site/avatar.jpg`, is a real photo of Medy (square-cropped from a
 phone photo he uploaded), replacing the original `canva://...` URL that
 only resolved inside Canva's own runtime — worthless once served from
@@ -64,6 +70,38 @@ anywhere else. (An AI-generated headshot briefly stood in for it — see
 "Guichet Tiers Payants" / tierspayant.site product for opticians) is an
 unrelated codebase. tierspayant.site is referenced here only as data —
 one entry in the `projects` list, linked externally.
+
+## Profil public
+
+The profile card on `public-site/index.html` (name, job title, bio,
+email, phone, photo) is real backend data, not hard-coded — a deliberate
+fix after the local `localStorage` admin panel turned out to only ever
+affect the editing browser's own view, never what real visitors saw.
+
+- `server/src/db.ts`'s `ProfileStore` — a **singleton**, not a list (one
+  JSON object at `config.profilePath`, default `server/data/profile.json`),
+  unlike `ProjectStore`/`SignupStore`. Same atomic-write pattern as the
+  rest of `db.ts`.
+- `server/src/api/routes/profile.ts`: `GET /api/profile` is public
+  (fetched by `public-site/index.html` on load); `PUT /api/profile` is
+  `requireAuth` — only Medy can change his own public profile.
+- `public-site/index.html`'s `loadProfile()` fetches `/api/profile` on
+  `DOMContentLoaded` and falls back to a hard-coded `DEFAULT_PROFILE`
+  object if the request fails (service asleep, offline) — the page must
+  never show blank fields just because the backend is unreachable.
+  `renderPublic()` sets `#public-avatar`'s `src` directly now (fixed a
+  real bug: the old code set `.style.backgroundImage` on an `<img>`,
+  which has no effect on that element — harmless only because
+  `photo_url` was always empty before this was wired up).
+- `web/src/pages/Profile.tsx` (admin tab "Mon profil", first tab under
+  "Portfolio du site"): a plain form, no schema-driven abstraction
+  needed for a single-object resource like this (unlike the 9 CRM
+  resources). `api.getPublicProfile`/`api.updatePublicProfile` in
+  `web/src/api.ts` — named to avoid colliding with the pre-existing
+  (and, as of this writing, still unused anywhere in the UI)
+  `api.updateCredentials` for changing the admin's own login/password.
+- Same persistence caveat as projects/signups: lost on every Render
+  free-tier sleep cycle until there's a persistent disk or a real DB.
 
 ## Commands
 
@@ -192,10 +230,11 @@ page instead of 9 near-duplicate React files:
   from the generic CRUD form below it, which just edits `Messages` rows
   directly without sending anything — useful for logging a call made
   outside Twilio, e.g. from a personal phone).
-- `App.tsx` nests two tab levels: `Portfolio du site` (existing
-  Projects/Signups pages, untouched) vs `Clients` (the 9 CRM tabs from
-  `RESOURCE_ORDER`). Switching CRM tabs remounts `CrmResourcePage` (React
-  `key`) rather than trying to reset its internal state by hand.
+- `App.tsx` nests two tab levels: `Portfolio du site` (Profil/Projects/
+  Signups pages — see "Profil public" above for the first one) vs
+  `Clients` (the 9 CRM tabs from `RESOURCE_ORDER`). Switching CRM tabs
+  remounts `CrmResourcePage` (React `key`) rather than trying to reset
+  its internal state by hand.
 - Degrades visibly, not silently: with no `AIRTABLE_API_KEY` (or no
   `TWILIO_*`), every CRM tab still renders its full form and an empty
   table, with the server's `HttpError` message shown in the usual
@@ -248,16 +287,18 @@ of failing obscurely.
 
 ## Not yet done
 
-- `medy.site` custom domain not yet attached in the Render dashboard —
-  `public-site/index.html` only serves today under whatever host the
-  Render service answers to when its `Host` header matches
-  `config.publicSite.host`; until DNS + the dashboard step are done,
-  visitors to the real medy.site still see whatever hosted it before
-  (Canva, if not yet repointed).
+- `medy.site` custom domain is attached in Render (Custom Domains: both
+  `medy.site` and `www.medy.site` verified, certificate issued, DNS zone
+  at the registrar has the matching `A`/`CNAME` records) — the profile
+  data is real and served from this backend (see "Profil public"
+  below). Portfolio cards ("Mes créations") are still the hard-coded
+  markup from the Canva extraction, not yet reading `GET /api/projects`
+  — see next bullet.
 - `public-site/index.html` still doesn't call `GET /api/projects` /
-  `POST /api/signups` — it's the page as extracted from Canva Code
-  (hard-coded portfolio cards, `mailto:` signup link), not yet wired to
-  this repo's own API. Low priority: the page works fine as-is; wiring it
+  `POST /api/signups` — the portfolio cards and the signup link are
+  still the hard-coded markup extracted from Canva Code, not yet wired
+  to this repo's own API (unlike the profile card, which is wired — see
+  "Profil public"). Low priority: the page works fine as-is; wiring it
   up mainly matters if Medy wants to add/edit portfolio projects without
   a code change.
 - `AIRTABLE_API_KEY` not yet generated/set anywhere — `/api/crm/*` will

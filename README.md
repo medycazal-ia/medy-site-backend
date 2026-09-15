@@ -6,6 +6,8 @@ Express, différencié par nom de domaine (voir "Site public medy.site"
 ci-dessous). Anciennement hébergé sur Canva Sites — migré ici pour ne
 plus dépendre de l'éditeur Canva Code.
 
+- le **profil public** (nom, fonction, présentation, coordonnées, photo)
+  affiché sur medy.site, modifiable depuis l'onglet "Mon profil",
 - la liste des projets affichés dans la section publique **"Mes
   créations"**, modifiable sans toucher au code du site,
 - la capture des inscriptions du bouton **"S'inscrire"**.
@@ -88,12 +90,13 @@ as Code" de Render) :
    personnalisé branché — voir "Site public medy.site" ci-dessous.
 
 **Limite acceptée pour l'instant** : le plan gratuit Render n'a pas de
-disque persistant — les données (projets, inscriptions, compte admin)
-sont perdues à chaque mise en veille du service (~15 min d'inactivité).
-Le projet "tierspayant.site" par défaut sera donc recréé automatiquement
-au redémarrage (valeur par défaut codée), mais **les inscriptions et
-tout projet ajouté depuis l'admin seront perdus** tant que ce n'est pas
-passé sur un plan payant avec disque, ou une vraie base de données.
+disque persistant — les données (profil, projets, inscriptions, compte
+admin) sont perdues à chaque mise en veille du service (~15 min
+d'inactivité). Le profil et le projet "tierspayant.site" par défaut
+seront donc recréés automatiquement au redémarrage (valeurs par défaut
+codées), mais **toute modification du profil, les inscriptions, et tout
+projet ajouté depuis l'admin seront perdus** tant que ce n'est pas passé
+sur un plan payant avec disque, ou une vraie base de données.
 
 ## Site public medy.site
 

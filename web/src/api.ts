@@ -1,4 +1,4 @@
-import type { Admin, Branding, Project, Signup } from "./types";
+import type { Admin, Branding, Profile, Project, Signup } from "./types";
 
 let onUnauthorized: (() => void) | null = null;
 
@@ -35,8 +35,13 @@ export const api = {
 
   me: () => request<{ admin: Admin }>("/auth/me"),
 
-  updateProfile: (payload: { currentPassword: string; newUsername?: string; newPassword?: string }) =>
+  updateCredentials: (payload: { currentPassword: string; newUsername?: string; newPassword?: string }) =>
     request<{ admin: Admin }>("/auth/profile", { method: "PATCH", body: JSON.stringify(payload) }),
+
+  getPublicProfile: () => request<{ profile: Profile }>("/profile"),
+
+  updatePublicProfile: (payload: Omit<Profile, "updatedAt">) =>
+    request<{ profile: Profile }>("/profile", { method: "PUT", body: JSON.stringify(payload) }),
 
   listProjects: () => request<{ projects: Project[] }>("/projects/all"),
 

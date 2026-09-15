@@ -25,6 +25,7 @@ export const config = {
   adminsPath: path.resolve(process.env.ADMINS_PATH ?? path.join(dataDir, "admins.json")),
   projectsPath: path.resolve(process.env.PROJECTS_PATH ?? path.join(dataDir, "projects.json")),
   signupsPath: path.resolve(process.env.SIGNUPS_PATH ?? path.join(dataDir, "signups.json")),
+  profilePath: path.resolve(process.env.PROFILE_PATH ?? path.join(dataDir, "profile.json")),
 
   auth: {
     username: process.env.ADMIN_USERNAME ?? "admin",

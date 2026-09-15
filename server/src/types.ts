@@ -25,6 +25,20 @@ export interface Project {
   updatedAt: string;
 }
 
+export interface Profile {
+  firstName: string;
+  lastName: string;
+  jobTitle: string;
+  email: string;
+  phone: string;
+  bio: string;
+  /** Titre affiché dans l'onglet du navigateur et dans l'en-tête du site public. */
+  siteTitle: string;
+  /** URL http(s) optionnelle ; vide = garde la photo par défaut (public-site/avatar.jpg). */
+  photoUrl: string;
+  updatedAt: string;
+}
+
 export interface Signup {
   id: string;
   email: string;

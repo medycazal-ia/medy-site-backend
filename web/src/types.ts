@@ -22,6 +22,18 @@ export interface Project {
   updatedAt: string;
 }
 
+export interface Profile {
+  firstName: string;
+  lastName: string;
+  jobTitle: string;
+  email: string;
+  phone: string;
+  bio: string;
+  siteTitle: string;
+  photoUrl: string;
+  updatedAt: string;
+}
+
 export interface Signup {
   id: string;
   email: string;

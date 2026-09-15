@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { config } from "./config.js";
-import type { Admin, Project, Signup } from "./types.js";
+import type { Admin, Profile, Project, Signup } from "./types.js";
 
 function readJson<T>(filePath: string, fallback: T): T {
   if (!fs.existsSync(filePath)) return fallback;
@@ -120,6 +120,43 @@ class ProjectStore {
   }
 }
 
+// Valeurs par défaut si aucun fichier n'existe encore — reprend le profil
+// codé en dur dans public-site/index.html avant que cette page ne lise ses
+// données depuis /api/profile.
+const DEFAULT_PROFILE: Profile = {
+  firstName: "Medy",
+  lastName: "CAZAL",
+  jobTitle: "Consultant RH et Digital",
+  email: "cazal@medy.site",
+  phone: "06 74 20 16 6 62",
+  bio: "J'accompagne les marques et les projets créatifs avec une communication claire, humaine et engagée.",
+  siteTitle: "Profil Connecté",
+  photoUrl: "",
+  updatedAt: "2026-09-15T00:00:00.000Z",
+};
+
+class ProfileStore {
+  private profile: Profile;
+
+  constructor(private readonly filePath: string) {
+    this.profile = readJson<Profile>(filePath, DEFAULT_PROFILE);
+  }
+
+  private persist(): void {
+    writeJsonAtomic(this.filePath, this.profile);
+  }
+
+  get(): Profile {
+    return this.profile;
+  }
+
+  update(patch: Partial<Omit<Profile, "updatedAt">>): Profile {
+    this.profile = { ...this.profile, ...patch, updatedAt: new Date().toISOString() };
+    this.persist();
+    return this.profile;
+  }
+}
+
 class SignupStore {
   private signups: Signup[];
 
@@ -157,3 +194,4 @@ class SignupStore {
 export const adminStore = new AdminStore(config.adminsPath);
 export const projectStore = new ProjectStore(config.projectsPath);
 export const signupStore = new SignupStore(config.signupsPath);
+export const profileStore = new ProfileStore(config.profilePath);
