@@ -22,6 +22,30 @@ variable d'env `AIRTABLE_API_KEY`. Sans cette clé, ces routes répondent
 une erreur 500 — le reste du site (portfolio, inscriptions) fonctionne
 normalement.
 
+## Messagerie & téléphonie (Twilio)
+
+`/api/twilio/messages` (SMS + WhatsApp) et `/api/twilio/call`
+(clic-pour-appeler) — admin uniquement, chaque envoi est journalisé dans
+la table Airtable `Messages`. Deux webhooks publics reçoivent les
+messages entrants et le TwiML du clic-pour-appeler
+(`/api/twilio/inbound`, `/api/twilio/voice/connect`), protégés par
+vérification de la signature Twilio plutôt que par connexion.
+
+Pour l'activer, dans la [console Twilio](https://console.twilio.com) :
+1. Récupérer **Account SID** et **Auth Token** (page d'accueil de la console).
+2. Acheter un numéro Twilio (SMS + appels) → `TWILIO_SMS_FROM`.
+3. Pour WhatsApp : utiliser le numéro sandbox Twilio (`+14155238886`) pour
+   tester tout de suite, ou demander l'approbation Meta Business Platform
+   pour un numéro définitif → `TWILIO_WHATSAPP_FROM`.
+4. Renseigner `TWILIO_MY_PHONE_NUMBER` (le téléphone de Medy, appelé en
+   premier lors d'un clic-pour-appeler) et `PUBLIC_BASE_URL` (l'URL
+   publique de ce service une fois déployé).
+5. Dans la console Twilio, configurer le numéro/sandbox pour pointer ses
+   webhooks "A message comes in" vers `<PUBLIC_BASE_URL>/api/twilio/inbound`.
+
+Sans ces variables, `/api/twilio/*` répond une erreur explicite plutôt
+que d'échouer silencieusement — le reste du site continue de fonctionner.
+
 ## Démarrage local
 
 ```bash

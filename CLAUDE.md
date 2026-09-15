@@ -140,6 +140,46 @@ records directly in Airtable's own UI, not just through this API.
   hits real Airtable (no key available in CI/this environment); verify
   manually against the live base once `AIRTABLE_API_KEY` is set.
 
+## Messagerie / téléphonie (Twilio)
+
+`server/src/twilio/` wraps the official `twilio` SDK. Nothing here talks
+to Twilio unless `TWILIO_ACCOUNT_SID`/`TWILIO_AUTH_TOKEN` are set — every
+call path throws a clear `HttpError` naming the missing env var instead
+of failing obscurely.
+
+- `twilio/client.ts` — `sendMessage(channel, to, body)` (SMS or WhatsApp,
+  same Twilio Messages API, differs only by `from`/`to` prefix) and
+  `initiateClickToCall(to)` (calls `TWILIO_MY_PHONE_NUMBER` first; once
+  Medy answers, Twilio requests TwiML from `/api/twilio/voice/connect`
+  which dials the client's number — the classic click-to-call pattern,
+  Medy's own number never dials out directly).
+- `api/routes/twilio.ts`: `POST /api/twilio/messages` and `POST
+  /api/twilio/call` are `requireAuth` (only Medy can send messages or
+  place calls); both log a `CrmMessage` row (Airtable `Messages` table)
+  after the Twilio call succeeds, tagged `Sortant`. `POST
+  /api/twilio/inbound` (SMS/WhatsApp received) and `POST
+  /api/twilio/voice/connect` (Twilio requesting the dial TwiML) are
+  necessarily public — Twilio can't send a session cookie — so they're
+  protected instead by `twilio/verifySignature.ts`'s
+  `verifyTwilioSignature` middleware (checks `X-Twilio-Signature` against
+  `PUBLIC_BASE_URL + req.originalUrl`; refuses with 500 if
+  `TWILIO_AUTH_TOKEN`/`PUBLIC_BASE_URL` aren't set, 403 if the signature
+  doesn't match). `inbound` tries to match the sender's phone number to
+  an existing `Contact` (`contactRepo.findByPhone`, a loose last-9-digits
+  comparison — Airtable formula matching was too brittle across phone
+  formats) before logging the message as `Entrant`.
+- Needs `express.urlencoded()` in `app.ts` alongside `express.json()`:
+  Twilio posts webhooks as form-encoded, never JSON.
+- `PUBLIC_BASE_URL` must exactly match the URL Twilio is configured to
+  hit (falls back to Render's auto-injected `RENDER_EXTERNAL_URL` if
+  unset) — a mismatch breaks signature verification. Doesn't work from
+  localhost without a public tunnel (ngrok); Twilio must be able to reach
+  it.
+- **Testing boundary** (same reasoning as Airtable): `tests/twilio.test.ts`
+  checks the auth/signature gates (401 without a session, 500 when
+  Twilio env vars are absent) — no test sends a real message, no
+  `TWILIO_*` credentials exist in this environment.
+
 ## Not yet done
 
 - Render service not created/deployed yet.
@@ -150,12 +190,17 @@ records directly in Airtable's own UI, not just through this API.
   deployed).
 - `AIRTABLE_API_KEY` not yet generated/set anywhere — `/api/crm/*` will
   500 until it is (see `.env.example`).
-- No admin UI for the 9 CRM resources — Medy uses Airtable's own
-  interface for now; build React pages here only if that stops being
-  enough (e.g. once medy.site itself needs to read/write CRM data, which
-  would need public, scoped endpoints this API doesn't expose yet).
-- Messaging/telephony/video/transcription connectors (WhatsApp, click-
-  to-call, visio, audio transcription) discussed but not implemented:
-  proposed stack is Twilio (WhatsApp+SMS+voice), Daily.co (visio),
-  AssemblyAI (transcription), Stripe (payment proposals) — blocked on
-  the user creating those accounts and handing over API keys.
+- No admin UI for the 9 CRM resources, nor for sending Twilio
+  messages/calls — Medy uses Airtable's own interface for CRM data; the
+  Twilio routes have no UI at all yet (call them directly, or build one).
+- All `TWILIO_*` env vars unset — nothing in `server/src/twilio/` can run
+  until Medy creates a Twilio account and hands over Account
+  SID/Auth Token/a phone number (see `.env.example` for exactly what's
+  needed, including the WhatsApp sandbox number for testing before Meta
+  Business approval).
+- Visio (Daily.co) and audio transcription (AssemblyAI) — proposed but
+  nothing built yet, same blocker (no account/API key).
+- Payment proposals (Stripe) — the `Paiements`/`Propositions commerciales`
+  Airtable tables exist and are reachable via `/api/crm/payments` and
+  `/api/crm/proposals`, but nothing generates a real Stripe payment link
+  yet.

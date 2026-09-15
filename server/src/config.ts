@@ -31,4 +31,24 @@ export const config = {
     apiKey: process.env.AIRTABLE_API_KEY ?? "",
     baseId: process.env.AIRTABLE_BASE_ID ?? "app2Zji7fTJLN9aAg",
   },
+
+  // Messagerie/téléphonie (SMS, WhatsApp, clic-pour-appeler) — voir server/src/twilio/.
+  twilio: {
+    accountSid: process.env.TWILIO_ACCOUNT_SID ?? "",
+    authToken: process.env.TWILIO_AUTH_TOKEN ?? "",
+    // Numéro Twilio pour SMS et pour émettre les appels (clic-pour-appeler).
+    smsFrom: process.env.TWILIO_SMS_FROM ?? "",
+    // Expéditeur WhatsApp Twilio, format E.164 sans le préfixe "whatsapp:"
+    // (ex: le sandbox +14155238886, ou un numéro validé Meta Business).
+    whatsappFrom: process.env.TWILIO_WHATSAPP_FROM ?? "",
+    // Le téléphone de Medy : pour le clic-pour-appeler, Twilio l'appelle
+    // d'abord puis relie l'appel au client une fois décroché.
+    myPhoneNumber: process.env.TWILIO_MY_PHONE_NUMBER ?? "",
+    // URL publique de ce service (ex: https://medy-site-backend.onrender.com),
+    // nécessaire pour que Twilio rappelle nos webhooks (TwiML, réception).
+    // RENDER_EXTERNAL_URL est injecté automatiquement par Render sur chaque
+    // service : sert de valeur par défaut si PUBLIC_BASE_URL n'est pas posé
+    // explicitement. Inutilisable en local sans tunnel (ngrok).
+    publicBaseUrl: process.env.PUBLIC_BASE_URL ?? process.env.RENDER_EXTERNAL_URL ?? "",
+  },
 };

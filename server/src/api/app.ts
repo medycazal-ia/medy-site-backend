@@ -11,6 +11,7 @@ import { authRouter } from "./routes/auth.js";
 import { crmRouter } from "./routes/crm.js";
 import { projectsRouter } from "./routes/projects.js";
 import { signupsRouter } from "./routes/signups.js";
+import { twilioRouter } from "./routes/twilio.js";
 
 // server/dist/api/app.js -> repo root, pour retrouver le build statique de l'admin.
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -23,6 +24,8 @@ export function createApp() {
   // sont protégées par cookie de session, servies same-origin en prod.
   app.use(cors());
   app.use(express.json());
+  // Twilio poste ses webhooks en application/x-www-form-urlencoded, jamais en JSON.
+  app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
 
   app.get("/api/health", (_req, res) => res.json({ ok: true }));
@@ -32,6 +35,10 @@ export function createApp() {
   app.use("/api/signups", signupsRouter);
   // Données clients (CRM, Airtable) : jamais publiques, tout le routeur est protégé.
   app.use("/api/crm", requireAuth, crmRouter);
+  // Mixte : /messages et /call exigent une session admin (déclaré route par
+  // route dans twilioRouter) ; /voice/connect et /inbound sont les webhooks
+  // publics de Twilio, protégés par vérification de signature à la place.
+  app.use("/api/twilio", twilioRouter);
 
   if (fs.existsSync(webDist)) {
     app.use(express.static(webDist));

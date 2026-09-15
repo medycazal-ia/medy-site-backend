@@ -54,6 +54,23 @@ d'inscription. D'où ce backend séparé, sur le même schéma que
   medy.site doit un jour lire/écrire ces données lui-même.
   **`AIRTABLE_API_KEY` pas encore généré/fourni** — `/api/crm/*` répond
   500 tant que ce n'est pas fait.
+- **Twilio** (SMS/WhatsApp/clic-pour-appeler) : demandé par l'utilisateur
+  ("connecte twilio") juste après. Impossible de créer un compte Twilio à
+  sa place (inscription, paiement, vérification téléphonique) — code
+  écrit et testé (gardes d'auth/signature) en attendant qu'il fournisse
+  Account SID/Auth Token/numéro. `server/src/twilio/client.ts`
+  (envoi SMS+WhatsApp via l'API Messages Twilio, clic-pour-appeler via
+  l'API Calls) + routes `/api/twilio/messages` et `/api/twilio/call`
+  (admin uniquement, loggent chaque envoi dans la table Airtable
+  `Messages`) + webhooks publics `/api/twilio/inbound` et
+  `/api/twilio/voice/connect` protégés par vérification de signature
+  Twilio (`verifyTwilioSignature`) plutôt que par cookie de session,
+  puisque Twilio ne peut pas en envoyer. Rapprochement automatique d'un
+  message entrant avec un `Contact` existant par numéro de téléphone
+  (comparaison approximative sur les 9 derniers chiffres, les formats de
+  numéro variant trop pour une correspondance exacte fiable).
+  **Toutes les variables `TWILIO_*` sont vides** — rien de fonctionnel
+  tant que l'utilisateur n'a pas créé son compte Twilio.
 - **Intégration site ↔ backend** : PAS ENCORE FAITE. Le canvas de design
   actuel utilise encore des cartes codées en dur et un lien `mailto:` —
   il faudra mettre à jour le JS collé dans l'éditeur Canva Code de

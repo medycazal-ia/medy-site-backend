@@ -1,5 +1,5 @@
 import { AirtableTable, type AirtableRecord } from "./client.js";
-import { linkIds } from "./mapping.js";
+import { linkIds, samePhoneNumber } from "./mapping.js";
 
 interface ContactFields {
   "Nom complet": string;
@@ -66,4 +66,10 @@ export const contactRepo = {
   update: async (id: string, patch: Partial<ContactInput>) =>
     fromRecord(await table.update(id, toFields(patch))),
   remove: async (id: string) => table.remove(id),
+
+  /** Rapproche un numéro entrant (webhook Twilio) d'un contact existant. */
+  findByPhone: async (phone: string): Promise<Contact | null> => {
+    const all = (await table.list()).map(fromRecord);
+    return all.find((c) => c.phone && samePhoneNumber(c.phone, phone)) ?? null;
+  },
 };
