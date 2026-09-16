@@ -55,6 +55,25 @@ Pour l'activer, dans la [console Twilio](https://console.twilio.com) :
 Sans ces variables, `/api/twilio/*` répond une erreur explicite plutôt
 que d'échouer silencieusement — le reste du site continue de fonctionner.
 
+## Email (Resend)
+
+`/api/email/send` — admin uniquement, envoie un email et journalise
+l'envoi dans la table Airtable `Messages` (canal "Email"), au même
+endroit que les SMS/WhatsApp/appels. Depuis l'admin : onglet **Clients →
+Messages**, sous-onglet **Email** du composeur.
+
+Pour l'activer :
+1. Créer un compte sur [resend.com](https://resend.com) et générer une
+   clé API (Dashboard → API Keys) → `RESEND_API_KEY`.
+2. `EMAIL_FROM` : `onboarding@resend.dev` fonctionne immédiatement sans
+   rien configurer de plus (pratique pour tester) ; pour une adresse sur
+   ton propre domaine (ex. `contact@medy.site`), vérifie ce domaine dans
+   Resend (Domains → Add Domain, puis les enregistrements DNS qu'il
+   indique) avant de l'utiliser ici.
+
+Sans `RESEND_API_KEY`, `/api/email/send` répond une erreur explicite
+plutôt que d'échouer silencieusement.
+
 ## Démarrage local
 
 ```bash

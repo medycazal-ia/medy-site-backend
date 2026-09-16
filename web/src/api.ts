@@ -78,6 +78,14 @@ export const crmApi = {
 
 // --- Messagerie/téléphonie (Twilio) ---
 
+export const emailApi = {
+  send: (payload: { to: string; subject: string; body: string; contactId?: string; projectId?: string }) =>
+    request<{ message: Record<string, unknown> }>("/email/send", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};
+
 export const twilioApi = {
   sendMessage: (payload: {
     channel: "sms" | "whatsapp";

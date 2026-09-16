@@ -60,4 +60,12 @@ export const config = {
     // explicitement. Inutilisable en local sans tunnel (ngrok).
     publicBaseUrl: process.env.PUBLIC_BASE_URL ?? process.env.RENDER_EXTERNAL_URL ?? "",
   },
+
+  // Email (envoi depuis le CRM) — voir server/src/email/.
+  email: {
+    resendApiKey: process.env.RESEND_API_KEY ?? "",
+    // onboarding@resend.dev fonctionne sans domaine vérifié (pratique pour tester) ;
+    // une adresse sur un domaine vérifié dans Resend est plus crédible en production.
+    from: process.env.EMAIL_FROM ?? "onboarding@resend.dev",
+  },
 };

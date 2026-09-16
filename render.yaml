@@ -29,3 +29,7 @@ services:
         sync: false
       - key: TWILIO_MY_PHONE_NUMBER
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: onboarding@resend.dev

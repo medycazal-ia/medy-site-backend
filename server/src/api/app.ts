@@ -9,6 +9,7 @@ import { HttpError } from "../httpError.js";
 import { requireAuth } from "../services/authService.js";
 import { authRouter } from "./routes/auth.js";
 import { crmRouter } from "./routes/crm.js";
+import { emailRouter } from "./routes/email.js";
 import { profileRouter } from "./routes/profile.js";
 import { projectsRouter } from "./routes/projects.js";
 import { signupsRouter } from "./routes/signups.js";
@@ -39,6 +40,8 @@ export function createApp() {
   app.use("/api/signups", signupsRouter);
   // Données clients (CRM, Airtable) : jamais publiques, tout le routeur est protégé.
   app.use("/api/crm", requireAuth, crmRouter);
+  // Envoi d'email (Resend) : admin uniquement, pas de webhook public à gérer ici.
+  app.use("/api/email", requireAuth, emailRouter);
   // Mixte : /messages et /call exigent une session admin (déclaré route par
   // route dans twilioRouter) ; /voice/connect et /inbound sont les webhooks
   // publics de Twilio, protégés par vérification de signature à la place.

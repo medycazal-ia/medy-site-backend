@@ -285,6 +285,34 @@ of failing obscurely.
   Twilio env vars are absent) — no test sends a real message, no
   `TWILIO_*` credentials exist in this environment.
 
+## Email (Resend)
+
+Same shape and same reasoning as Twilio, much smaller: one provider, one
+send path, no inbound webhook (Resend has one for delivery events, not
+wired up — not needed yet).
+
+- `server/src/email/client.ts` — `sendEmail(to, subject, text)`, a plain
+  `fetch` call to Resend's REST API (no SDK dependency, matching the
+  `airtable/client.ts` style — no need for a client library over a
+  single simple POST endpoint). Throws a clear `HttpError` naming
+  whichever of `RESEND_API_KEY`/`EMAIL_FROM` is missing, exactly like
+  `twilio/client.ts` does for its own env vars.
+- `server/src/api/routes/email.ts`: `POST /api/email/send`, mounted
+  behind `requireAuth` at the router level in `app.ts` (unlike Twilio's
+  per-route mounting — there's no public webhook counterpart here, so
+  the whole router can require a session). Logs a `CrmMessage` row
+  (Airtable `Messages`, canal `"Email"`) after the send succeeds, same
+  as Twilio's outbound paths.
+- `web/src/crm/MessageComposer.tsx` gained a third mode (`"message" |
+  "email" | "call"`) alongside the existing SMS/WhatsApp/click-to-call
+  ones — same component, not a separate one, since it's the same
+  "compose and log to Messages" shape. Picking a contact prefills their
+  email instead of phone when in email mode.
+- **Testing boundary**: `tests/email.test.ts` mirrors `twilio.test.ts`
+  exactly — auth gate (401), payload validation (400), missing-env-var
+  error (500 naming `RESEND_API_KEY`) — no real send, no `RESEND_API_KEY`
+  in this environment.
+
 ## Not yet done
 
 - `medy.site` custom domain is attached in Render (Custom Domains: both
@@ -301,15 +329,24 @@ of failing obscurely.
   "Profil public"). Low priority: the page works fine as-is; wiring it
   up mainly matters if Medy wants to add/edit portfolio projects without
   a code change.
-- `AIRTABLE_API_KEY` not yet generated/set anywhere — `/api/crm/*` will
-  500 until it is (see `.env.example`).
-- All `TWILIO_*` env vars unset — nothing in `server/src/twilio/` can run
-  until Medy creates a Twilio account and hands over Account
-  SID/Auth Token/a phone number (see `.env.example` for exactly what's
-  needed, including the WhatsApp sandbox number for testing before Meta
-  Business approval).
+- `AIRTABLE_API_KEY` is set and working in production — `/api/crm/*` is
+  live. Two gotchas hit while setting it up, worth knowing if `/api/crm/*`
+  ever 401s/403s/404s again after a key rotation: (1) Airtable's token
+  list page only ever shows the token's short *ID*, never the full
+  secret again after creation — copying that ID instead of the secret
+  shown once at creation time looks like a valid-but-wrong key and fails
+  auth; (2) a token's **Access** (which bases/workspaces it can reach) is
+  separate from its **Scopes** (what it's allowed to do) — a token can
+  have perfect scopes and zero bases granted, which reads as "invalid
+  permissions" or a bare 404, not as an obviously-empty-access error.
+- `TWILIO_ACCOUNT_SID`/`TWILIO_AUTH_TOKEN` are set, but no phone number
+  yet (`TWILIO_SMS_FROM`/`TWILIO_MY_PHONE_NUMBER`) — buy one in the
+  Twilio console (Phone Numbers → Buy a number) to actually send
+  SMS/calls; WhatsApp can use the sandbox number in the meantime.
 - Visio (Daily.co) and audio transcription (AssemblyAI) — proposed but
   nothing built yet, same blocker (no account/API key).
+- `RESEND_API_KEY` not yet generated — `/api/email/send` will 500 until
+  it is (see "Email (Resend)" above and `.env.example`).
 - Payment proposals (Stripe) — the `Paiements`/`Propositions commerciales`
   Airtable tables exist and are reachable via `/api/crm/payments` and
   `/api/crm/proposals`, but nothing generates a real Stripe payment link
