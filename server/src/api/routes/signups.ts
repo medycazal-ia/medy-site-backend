@@ -7,9 +7,11 @@ export const signupsRouter = Router();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Public : formulaire "S'inscrire" du site medy.site.
+// Public : formulaire "S'inscrire" du site medy.site (et création manuelle
+// depuis l'admin, qui appelle cette même route — pas de distinction de
+// permission nécessaire, une inscription n'est jamais sensible).
 signupsRouter.post("/", (req, res) => {
-  const { email, source } = req.body as { email?: string; source?: string };
+  const { email, name, source } = req.body as { email?: string; name?: string; source?: string };
   const trimmed = email?.trim().toLowerCase() ?? "";
   if (!EMAIL_RE.test(trimmed)) {
     return res.status(400).json({ error: "Adresse email invalide" });
@@ -22,6 +24,7 @@ signupsRouter.post("/", (req, res) => {
 
   const signup = {
     id: crypto.randomUUID(),
+    name: name?.trim() ?? "",
     email: trimmed,
     source: source?.trim() || "header",
     createdAt: new Date().toISOString(),

@@ -72,6 +72,17 @@ describe("signups", () => {
     expect(signups.some((s: { email: string }) => s.email === "visiteur@example.com")).toBe(true);
   });
 
+  it("accepte un nom optionnel (création manuelle depuis l'admin)", async () => {
+    const res = await fetch(`${baseUrl}/api/signups`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: "nommee@example.com", name: "Jeanne Dupont", source: "admin" }),
+    });
+    expect(res.status).toBe(201);
+    const { signup } = await res.json();
+    expect(signup.name).toBe("Jeanne Dupont");
+  });
+
   it("ne duplique pas une inscription déjà connue", async () => {
     await fetch(`${baseUrl}/api/signups`, {
       method: "POST",

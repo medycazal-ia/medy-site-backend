@@ -20,12 +20,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   hidden 5-click trigger on the public site's logo opens in a new tab.
 - **`/api/*`** (any host) → the API: `GET /api/profile` (public — fetched
   by `public-site/index.html` on load to render the profile card) / `PUT
-  /api/profile` (admin-only), `GET /api/projects` / `POST /api/signups`
-  (public — support the portfolio/signup pieces of `public-site/index.html`,
-  though that page doesn't actually call the projects one yet, see "Not
-  yet done"), `/api/crm/*` (admin-only, Airtable-backed CRM),
-  `/api/twilio/*` (admin-only sends + public signature-verified
-  webhooks).
+  /api/profile` (admin-only), `POST /api/signups` (public — the header
+  "S'inscrire" form on `public-site/index.html` calls this directly),
+  `GET /api/projects` (public but not yet called by that page — the
+  portfolio cards are still hard-coded, see "Not yet done"), `/api/crm/*`
+  (admin-only, Airtable-backed CRM), `/api/twilio/*` and `/api/email/send`
+  (admin-only sends + Twilio's public signature-verified webhooks).
 
 The React admin app (`web/`) covers portfolio/signups management, the 9
 CRM resources (generic schema-driven CRUD — see "CRM admin UI" below),
@@ -102,6 +102,26 @@ affect the editing browser's own view, never what real visitors saw.
   `api.updateCredentials` for changing the admin's own login/password.
 - Same persistence caveat as projects/signups: lost on every Render
   free-tier sleep cycle until there's a persistent disk or a real DB.
+
+## Inscriptions
+
+`POST /api/signups` is deliberately reused by two different callers
+instead of having a separate admin-only creation route — a signup was
+never sensitive data, so there's no reason to gate creation behind
+`requireAuth` even when it's Medy adding one himself:
+
+- `public-site/index.html`'s header "S'inscrire" form (email only, no
+  name field — kept low-friction for an anonymous visitor) posts here
+  with `source: "header"`.
+- `web/src/pages/Signups.tsx`'s "Ajouter une inscription" form (name
+  optional + email) posts to the exact same endpoint with
+  `source: "admin"`, for logging someone Medy met in person or spoke to
+  by phone. `Signup.name` (`server/src/types.ts`) is optional for this
+  reason — a header signup never sends one.
+- Both land in the same `SignupStore` / admin table; `source`
+  distinguishes them after the fact. `GET /api/signups` (listing) stays
+  `requireAuth` — reading the list is what needs to be admin-only, not
+  creating an entry.
 
 ## Commands
 
@@ -322,13 +342,13 @@ wired up — not needed yet).
   below). Portfolio cards ("Mes créations") are still the hard-coded
   markup from the Canva extraction, not yet reading `GET /api/projects`
   — see next bullet.
-- `public-site/index.html` still doesn't call `GET /api/projects` /
-  `POST /api/signups` — the portfolio cards and the signup link are
-  still the hard-coded markup extracted from Canva Code, not yet wired
-  to this repo's own API (unlike the profile card, which is wired — see
-  "Profil public"). Low priority: the page works fine as-is; wiring it
-  up mainly matters if Medy wants to add/edit portfolio projects without
-  a code change.
+- `public-site/index.html` still doesn't call `GET /api/projects` — the
+  portfolio cards ("Mes créations") are still the hard-coded markup
+  extracted from Canva Code, not yet wired to this repo's own API
+  (unlike the profile card and the signup form, which are both wired —
+  see "Profil public" and "Inscriptions" below). Low priority: the page
+  works fine as-is; wiring it up mainly matters if Medy wants to
+  add/edit portfolio projects without a code change.
 - `AIRTABLE_API_KEY` is set and working in production — `/api/crm/*` is
   live. Two gotchas hit while setting it up, worth knowing if `/api/crm/*`
   ever 401s/403s/404s again after a key rotation: (1) Airtable's token
@@ -339,14 +359,27 @@ wired up — not needed yet).
   separate from its **Scopes** (what it's allowed to do) — a token can
   have perfect scopes and zero bases granted, which reads as "invalid
   permissions" or a bare 404, not as an obviously-empty-access error.
-- `TWILIO_ACCOUNT_SID`/`TWILIO_AUTH_TOKEN` are set, but no phone number
-  yet (`TWILIO_SMS_FROM`/`TWILIO_MY_PHONE_NUMBER`) — buy one in the
-  Twilio console (Phone Numbers → Buy a number) to actually send
-  SMS/calls; WhatsApp can use the sandbox number in the meantime.
+- `TWILIO_*` is fully set (SID/token/phone numbers) and click-to-call
+  works in production. SMS/WhatsApp free-text sends still fail on this
+  **trial** Twilio account, for two separate reasons: (1) trial accounts
+  can only message phone numbers added as a Verified Caller ID in the
+  Twilio console; (2) trial accounts can only send **predefined SMS
+  templates**, not arbitrary text — this specific limit only lifts by
+  moving the account to pay-as-you-go billing (adding a card), it's not
+  a config fix. WhatsApp's sandbox allows free text instead of templates,
+  but only within 24h of the recipient's last inbound message to the
+  sandbox number (re-sending the "join <sandbox-name>" code refreshes
+  that window).
 - Visio (Daily.co) and audio transcription (AssemblyAI) — proposed but
   nothing built yet, same blocker (no account/API key).
-- `RESEND_API_KEY` not yet generated — `/api/email/send` will 500 until
-  it is (see "Email (Resend)" above and `.env.example`).
+- `RESEND_API_KEY` is set and `medy.site` is a verified sending domain
+  in Resend (DKIM + FPS records in the registrar's DNS zone, "Activer la
+  réception" left off since Medy already has real mailboxes on this
+  domain elsewhere — enabling it would fight that setup over the `MX`
+  record). `EMAIL_FROM` should be an address on that verified domain
+  (e.g. `contact@medy.site`), not the default `onboarding@resend.dev` —
+  the Resend sandbox address can only email the account owner and is
+  more likely to land in spam.
 - Payment proposals (Stripe) — the `Paiements`/`Propositions commerciales`
   Airtable tables exist and are reachable via `/api/crm/payments` and
   `/api/crm/proposals`, but nothing generates a real Stripe payment link

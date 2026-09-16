@@ -55,6 +55,12 @@ export const api = {
 
   listSignups: () => request<{ signups: Signup[] }>("/signups"),
 
+  createSignup: (payload: { name?: string; email: string }) =>
+    request<{ signup: Signup; alreadyRegistered?: boolean }>("/signups", {
+      method: "POST",
+      body: JSON.stringify({ ...payload, source: "admin" }),
+    }),
+
   deleteSignup: (id: string) => request<undefined>(`/signups/${id}`, { method: "DELETE" }),
 };
 

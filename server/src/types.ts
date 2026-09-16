@@ -41,6 +41,8 @@ export interface Profile {
 
 export interface Signup {
   id: string;
+  /** Optionnel : une inscription publique via le formulaire du site ne demande que l'email. */
+  name: string;
   email: string;
   /** D'où vient l'inscription, ex: "header" — libre, pour distinguer plusieurs points d'entrée futurs. */
   source: string;

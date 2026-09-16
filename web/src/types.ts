@@ -36,6 +36,7 @@ export interface Profile {
 
 export interface Signup {
   id: string;
+  name: string;
   email: string;
   source: string;
   createdAt: string;
