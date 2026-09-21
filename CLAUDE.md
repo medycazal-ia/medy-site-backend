@@ -128,11 +128,13 @@ that "gives him a commercial look." Cropped with the same pipeline as
 every other character image (`crop((380,0,900,720))` on the 1280×720
 generation → resize to 640px width → JPEG quality=88) to land at the
 same 640×886 as the others. Links to
-`mailto:cazal@medy.site?subject=...` — Medy didn't give a destination
-URL for this one, and per the standing rule against guessing external
-URLs, a `mailto:` to his own already-known address was used instead of
-inventing one; flag this choice to him and swap it for a real page/link
-if he wants one later.
+`https://victor-agt-medy.onrender.com/` (an agent called "Victor" on
+Medy's `victor-agt-medy` Render deployment, a separate project from
+this repo — same pattern as the "Medy Audite"/`naiom-platform` link).
+Initially shipped linking to a `mailto:` to Medy's own address, since
+he hadn't given a destination URL yet and the name he said ("Victor")
+didn't resolve to anything guessable from context — he gave the real
+URL a couple of messages later and it was swapped in.
 
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
