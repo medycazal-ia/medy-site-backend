@@ -60,11 +60,15 @@ public" below); there is no more `localStorage`-based local admin panel
 — it existed early on but only ever wrote to the visiting browser's own
 storage, never to anything other visitors could see, so it was removed
 rather than fixed (see `.memory`). Its one image,
-`public-site/avatar.jpg`, is a real photo of Medy (square-cropped from a
-phone photo he uploaded), replacing the original `canva://...` URL that
-only resolved inside Canva's own runtime — worthless once served from
-anywhere else. (An AI-generated headshot briefly stood in for it — see
-`.memory` for why that got replaced.)
+`public-site/avatar.jpg`, replaced the original `canva://...` URL that
+only resolved inside Canva's own runtime (worthless once served from
+anywhere else) — first with a real cropped photo, then, at Medy's
+request, with a headshot crop of the same illustrated bald/orange-glasses
+character used on the "Medy fait du cinéma" / "Medy fait ton tiers
+payant" portfolio cards (`public-site/studio-agent.jpg` /
+`tierspayant-agent.jpg`), for visual consistency across the page. See
+`.memory` for the fuller history (an AI-generated realistic headshot
+also briefly stood in for it before this).
 
 **Separate project, do not mix**: `medycazal-ia/tp-opt` (the
 "Guichet Tiers Payants" / tierspayant.site product for opticians) is an
