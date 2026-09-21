@@ -103,12 +103,20 @@ browser session, persists across reloads in the same tab). Current
 access code: `MEDYOUTILS26` (told to Medy separately — change it by
 replacing `ACCESS_CODE_HASH` with the SHA-256 hex digest of a new code).
 
-Once unlocked, the page shows a grid of small cards linking to external
-tools Medy uses (Higgsfield, Canva, Resend, Render, Vercel, Make,
-Airtable, each with a lucide icon + one-line description) plus a
-dashed "D'autres bientôt" placeholder card — Medy said this list will
-grow; add new tool cards to the `.tool-grid` in `boite-secrete.html`
-following the same markup pattern.
+Once unlocked, the page shows two grids of small cards, each linking
+out to a tool's own site (real backend integration, not deep-linked):
+"Mes outils" (Higgsfield, Canva, Resend, Render, Vercel, Make, Airtable
+— tools Medy named directly, whether or not they happen to be Claude
+MCP connectors) and "Connectés à Claude" (ElevenLabs, Gamma, Gmail,
+Google Calendar, Google Drive, HyperFrames by HeyGen, Lovable, Slack,
+Stripe, Webflow, Zoom — every connector that came back `connected: true`
+from this Claude session's `ListConnectors` at the time, minus Canva/
+Make/Airtable already listed under "Mes outils" to avoid duplicates),
+plus a dashed "D'autres bientôt" placeholder card at the very end. Medy
+said this list will grow; add new tool cards to the relevant `.tool-grid`
+in `boite-secrete.html` following the same markup pattern (`.tool-icon`
+background/color pair should stay visually distinct from existing
+cards — see the inline `style=` on each for the palette used so far).
 
 ## Profil public
 
