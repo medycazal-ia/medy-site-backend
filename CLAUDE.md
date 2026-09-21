@@ -115,6 +115,25 @@ natural follow-up — `audit-agent.jpg` is a separate file from
 `avatar.jpg` specifically so it can be swapped later without touching
 the profile photo.
 
+**"Medy fait des propositions" card (5th "Mes créations" card)**:
+`public-site/propositions-agent.jpg` — unlike the previous few cards,
+ElevenLabs' free-tier image quota had reset by the time this one was
+requested, so this **is** a real edited character generation (not a
+badge workaround): same reference-upload + `creative_edit_image` flow
+as `tierspayant-agent.jpg`/`studio-agent.jpg`, prompted to swap the
+clapperboard for a brown leather briefcase in one hand and a small
+bar-chart "proposal" document in the other — a visual read as
+"salesperson/business consultant" per Medy's request for something
+that "gives him a commercial look." Cropped with the same pipeline as
+every other character image (`crop((380,0,900,720))` on the 1280×720
+generation → resize to 640px width → JPEG quality=88) to land at the
+same 640×886 as the others. Links to
+`mailto:cazal@medy.site?subject=...` — Medy didn't give a destination
+URL for this one, and per the standing rule against guessing external
+URLs, a `mailto:` to his own already-known address was used instead of
+inventing one; flag this choice to him and swap it for a real page/link
+if he wants one later.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
