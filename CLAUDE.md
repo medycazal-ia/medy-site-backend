@@ -75,6 +75,41 @@ also briefly stood in for it before this).
 unrelated codebase. tierspayant.site is referenced here only as data —
 one entry in the `projects` list, linked externally.
 
+### "Medy est outillé" card / "Ma boîte secrète" page
+
+The first "Mes créations" card (`public-site/index.html`) no longer
+links to tierspayant.site (that link moved to the third card, "Medy
+fait ton tiers payant") — it now links to `public-site/boite-secrete.html`,
+a second static page (same host-routing rules apply, served whenever
+`boite-secrete.html` is requested under `medy.site`). It reuses
+`tierspayant-agent.jpg` (same illustrated character, no new image was
+generated for it) plus a small inline SVG toolbox icon: **no image was
+actually fetched from the internet** for this — this sandbox's egress
+proxy blocks arbitrary external hosts (even CDNs like jsdelivr/wikimedia,
+confirmed via `curl`), and the ElevenLabs image-generation free-tier
+quota was still exhausted at the time — so a hand-drawn inline SVG
+toolbox icon was used instead (matches the site's existing inline-SVG
+icon style, e.g. the arrow icons on every card).
+
+`boite-secrete.html` is a simple client-side-gated page (no server
+route, no API): a lock screen asks for an access code, hashed with
+`crypto.subtle.digest("SHA-256", …)` and compared to a hex digest
+constant (`ACCESS_CODE_HASH`) in the page's script — the plaintext code
+is never stored in the page source. **This is not real security** (fully
+bypassable via view-source + a bit of JS console work) — it's a light
+"secret box" gate for a personal site, not a protection for sensitive
+data. The unlocked state is kept in `sessionStorage` (relocks on new
+browser session, persists across reloads in the same tab). Current
+access code: `MEDYOUTILS26` (told to Medy separately — change it by
+replacing `ACCESS_CODE_HASH` with the SHA-256 hex digest of a new code).
+
+Once unlocked, the page shows a grid of small cards linking to external
+tools Medy uses (Higgsfield, Canva, Resend, Render, Vercel, Make,
+Airtable, each with a lucide icon + one-line description) plus a
+dashed "D'autres bientôt" placeholder card — Medy said this list will
+grow; add new tool cards to the `.tool-grid` in `boite-secrete.html`
+following the same markup pattern.
+
 ## Profil public
 
 The profile card on `public-site/index.html` (name, job title, bio,
