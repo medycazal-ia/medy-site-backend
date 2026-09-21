@@ -143,31 +143,39 @@ browser session, persists across reloads in the same tab). Current
 access code: `MEDYOUTILS26` (told to Medy separately — change it by
 replacing `ACCESS_CODE_HASH` with the SHA-256 hex digest of a new code).
 
-Once unlocked, the page shows three grids of small cards, each linking
-out to a tool's own site (real backend integration, not deep-linked):
-"Mes outils" (Higgsfield, Canva, Resend, Render, Vercel, Make, Airtable,
-Supabase, CustomJS, Twilio, MyEasyOptic, Google Cloud, DNSChecker, LWS
-Panel — tools Medy named directly, whether or not they happen to be
-Claude MCP connectors), "Connectés à Claude" (ElevenLabs, Gamma, Gmail,
-Google Calendar, Google Drive, HyperFrames by HeyGen, Lovable, Slack,
-Stripe, Webflow, Zoom — every connector that came back `connected: true`
-from this Claude session's `ListConnectors` at the time, minus Canva/
-Make/Airtable already listed under "Mes outils" to avoid duplicates),
-and "Claude & Anthropic" (claude.ai, Claude Platform at
-platform.claude.com — formerly console.anthropic.com, the API/developer
-console — Claude Code, Claude Design at claude.ai/design; these four
-share one warm-orange `.tool-icon` background `#fff7ed` with a
-different accent shade each, a deliberate "same company, sibling
-products" visual grouping), plus a dashed "D'autres bientôt" placeholder
-card at the very end of that last grid. Medy said this list will grow;
-add new tool cards to the relevant `.tool-grid` in `boite-secrete.html`
-following the same markup pattern (`.tool-icon` background/color pair
-should stay visually distinct from existing cards in the same grid —
-see the inline `style=` on each for the palette used so far). URLs for
-tools not already known with certainty (MyEasyOptic, LWS Panel,
-CustomJS, the exact current Claude Platform/Design URLs) were verified
-via `WebSearch` before being written into the page, rather than
-guessed.
+Once unlocked, the page shows small cards grouped into **domain-based**
+categories (`<h2>` + its own `.tool-grid`), not by source/connector
+status — Medy explicitly asked for a "classement par domaine et
+utilité" instead of the original "which list did I find this tool
+from" grouping (that original `ListConnectors`-derived split is gone;
+don't reintroduce it). Current categories, in page order:
+
+- **Création & design IA**: Higgsfield, Canva, Gamma, Genially,
+  ElevenLabs, HyperFrames (HeyGen)
+- **Développement & hébergement**: GitHub, Render, Vercel, Supabase,
+  CustomJS, Google Cloud, LWS Panel, DNSChecker, Lovable, Webflow
+- **Communication & collaboration**: Gmail, Google Calendar, Google
+  Drive, Slack, Zoom, Twilio, Fireflies
+- **Automatisation & données**: Make, Airtable
+- **Formation & pédagogie**: Moodle, Articulate 360
+- **Business & paiement**: Stripe, MyEasyOptic, Resend
+- **Claude & Anthropic**: claude.ai, Claude Platform (platform.claude.com
+  — formerly console.anthropic.com), Claude Code, Claude Design
+  (claude.ai/design) — these four share one warm-orange `.tool-icon`
+  background `#fff7ed` with a different accent shade each, a deliberate
+  "same company, sibling products" visual grouping; the dashed "D'autres
+  bientôt" placeholder card stays at the very end of this last grid.
+
+Medy said this list will keep growing; add a new tool card to whichever
+`.tool-grid` matches its domain (create a new `<h2>` + `.tool-grid` pair
+if none fit), following the existing markup pattern (`.tool-icon`
+background/color pair should stay visually distinct from others in the
+*same* grid — reuse across different grids is fine — see the inline
+`style=` on each for the palette used so far). URLs for tools not
+already known with certainty (MyEasyOptic, LWS Panel, CustomJS,
+Fireflies, Genially, Articulate 360, Moodle, the exact current Claude
+Platform/Design URLs) were verified via `WebSearch` before being
+written into the page, rather than guessed.
 
 **Red/green access badge**: both the "Accès privé" badge on the
 index.html card (`#access-badge`) and the one on `boite-secrete.html`'s
