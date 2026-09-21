@@ -158,7 +158,16 @@ don't reintroduce it). Current categories, in page order:
   Drive, Slack, Zoom, Twilio, Fireflies
 - **Automatisation & données**: Make, Airtable
 - **Formation & pédagogie**: Moodle, Articulate 360
-- **Business & paiement**: Stripe, MyEasyOptic, Resend
+- **Business & paiement**: Stripe, Resend
+- **Logiciels opticiens**: MyEasyOptic, Cosium, ProOptic, Konvergence —
+  split out from "Business & paiement" once there were four opticien-
+  specific tools, all sharing the `eye` icon with a different accent
+  color each. **Konvergence has no `href`/no link** (`.tool-card-soon`
+  markup, a plain `<div>` not an `<a>`): it's Krys Group's internal
+  software and no public site for it turned up in search — don't invent
+  one. If Medy gives a real URL for it later, swap the `<div>` for an
+  `<a href="…" target="_blank" rel="noopener noreferrer">` and drop the
+  `tool-card-soon` class, matching every other card in this grid.
 - **Claude & Anthropic**: claude.ai, Claude Platform (platform.claude.com
   — formerly console.anthropic.com), Claude Code, Claude Design
   (claude.ai/design) — these four share one warm-orange `.tool-icon`
