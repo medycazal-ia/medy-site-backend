@@ -155,10 +155,12 @@ don't reintroduce it). Current categories, in page order:
 - **Développement & hébergement**: GitHub, Render, Vercel, Supabase,
   CustomJS, Google Cloud, LWS Panel, DNSChecker, Lovable, Webflow
 - **Communication & collaboration**: Gmail, Google Calendar, Google
-  Drive, Slack, Zoom, Twilio, Fireflies
+  Drive, Slack, Zoom, Twilio, Fireflies, Resend (moved here from
+  "Business & paiement" at Medy's request — it's transactional email,
+  a communication channel, not really a payment/business tool)
 - **Automatisation & données**: Make, Airtable
 - **Formation & pédagogie**: Moodle, Articulate 360
-- **Business & paiement**: Stripe, Resend
+- **Business & paiement**: Stripe
 - **Logiciels opticiens**: MyEasyOptic, Cosium, ProOptic, Konvergence —
   split out from "Business & paiement" once there were four opticien-
   specific tools, all sharing the `eye` icon with a different accent
