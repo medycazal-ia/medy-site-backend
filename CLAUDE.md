@@ -193,6 +193,15 @@ button — so it's now server-backed:
   it any time from that admin tab without needing a code edit — don't
   assume it's still `MEDYOUTILS26` in production once he's used this.
 
+**"Déconnexion" button**: `#lock-again`, top-right of the unlocked
+`#tools-screen` header. Calls `relock()` — clears the `sessionStorage`
+unlock flag, re-shows the lock screen, flips the status badge back to
+`.status-locked`, re-enables every `#unlock-form` element (the success
+path disables them all after a correct code, so without this they'd
+stay disabled after a relock), clears the code input, and focuses it.
+Lets a visitor manually re-lock the page on a shared/public computer
+instead of only relying on closing the tab.
+
 Once unlocked, the page shows small cards grouped into **domain-based**
 categories (`<h2>` + its own `.tool-grid`), not by source/connector
 status — Medy explicitly asked for a "classement par domaine et
