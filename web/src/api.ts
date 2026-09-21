@@ -43,6 +43,11 @@ export const api = {
   updatePublicProfile: (payload: Omit<Profile, "updatedAt">) =>
     request<{ profile: Profile }>("/profile", { method: "PUT", body: JSON.stringify(payload) }),
 
+  getBoiteSecreteStatus: () => request<{ codeHash: string; updatedAt: string }>("/boite-secrete"),
+
+  updateBoiteSecreteCode: (code: string) =>
+    request<{ updatedAt: string }>("/boite-secrete", { method: "PUT", body: JSON.stringify({ code }) }),
+
   listProjects: () => request<{ projects: Project[] }>("/projects/all"),
 
   createProject: (payload: Partial<Project>) =>

@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -14,11 +15,15 @@ function extractCookie(res: Response): string {
   return raw.split(";")[0];
 }
 
+function sha256(value: string): string {
+  return crypto.createHash("sha256").update(value).digest("hex");
+}
+
 beforeAll(async () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "msb-test-"));
   process.env.DATA_DIR = tmpDir;
   process.env.ADMINS_PATH = path.join(tmpDir, "admins.json");
-  process.env.PROFILE_PATH = path.join(tmpDir, "profile.json");
+  process.env.BOITE_SECRETE_PATH = path.join(tmpDir, "boite-secrete.json");
   process.env.ADMIN_USERNAME = "admin";
   process.env.ADMIN_PASSWORD = "bootstrap-pass-123";
   process.env.SESSION_SECRET = "test-session-secret";
@@ -47,55 +52,43 @@ afterAll(() => {
   server.close();
 });
 
-describe("profile", () => {
-  it("expose le profil par défaut, publiquement", async () => {
-    const res = await fetch(`${baseUrl}/api/profile`);
+describe("boite-secrete", () => {
+  it("expose le hash par défaut, publiquement, jamais le code en clair", async () => {
+    const res = await fetch(`${baseUrl}/api/boite-secrete`);
     expect(res.status).toBe(200);
-    const { profile } = await res.json();
-    expect(profile.firstName).toBe("Medy Harry");
-    expect(profile.email).toBe("cazal@medy.site");
+    const body = await res.json();
+    expect(body.codeHash).toBe(sha256("MEDYOUTILS26"));
+    expect(body.code).toBeUndefined();
   });
 
   it("refuse la modification sans authentification", async () => {
-    const res = await fetch(`${baseUrl}/api/profile`, {
+    const res = await fetch(`${baseUrl}/api/boite-secrete`, {
       method: "PUT",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ firstName: "Intrus", lastName: "X", email: "x@example.com" }),
+      body: JSON.stringify({ code: "NOUVEAUCODE" }),
     });
     expect(res.status).toBe(401);
   });
 
-  it("met à jour le profil et le renvoie ensuite publiquement", async () => {
-    const putRes = await fetch(`${baseUrl}/api/profile`, {
+  it("rejette un code trop court", async () => {
+    const res = await fetch(`${baseUrl}/api/boite-secrete`, {
       method: "PUT",
       headers: { "content-type": "application/json", cookie },
-      body: JSON.stringify({
-        firstName: "Medy",
-        lastName: "CAZAL",
-        jobTitle: "Nouveau titre",
-        email: "cazal@medy.site",
-        phone: "06 00 00 00 00",
-        bio: "Nouvelle bio",
-        siteTitle: "Profil Connecté",
-        photoUrl: "",
-      }),
-    });
-    expect(putRes.status).toBe(200);
-    const { profile } = await putRes.json();
-    expect(profile.jobTitle).toBe("Nouveau titre");
-
-    const publicRes = await fetch(`${baseUrl}/api/profile`);
-    const { profile: publicProfile } = await publicRes.json();
-    expect(publicProfile.jobTitle).toBe("Nouveau titre");
-    expect(publicProfile.bio).toBe("Nouvelle bio");
-  });
-
-  it("rejette un profil sans prénom/nom/email", async () => {
-    const res = await fetch(`${baseUrl}/api/profile`, {
-      method: "PUT",
-      headers: { "content-type": "application/json", cookie },
-      body: JSON.stringify({ firstName: "", lastName: "CAZAL", email: "cazal@medy.site" }),
+      body: JSON.stringify({ code: "abc" }),
     });
     expect(res.status).toBe(400);
+  });
+
+  it("met à jour le code et le hash public change en conséquence", async () => {
+    const putRes = await fetch(`${baseUrl}/api/boite-secrete`, {
+      method: "PUT",
+      headers: { "content-type": "application/json", cookie },
+      body: JSON.stringify({ code: "  NouveauCode2026  " }),
+    });
+    expect(putRes.status).toBe(200);
+
+    const publicRes = await fetch(`${baseUrl}/api/boite-secrete`);
+    const { codeHash } = await publicRes.json();
+    expect(codeHash).toBe(sha256("NouveauCode2026"));
   });
 });

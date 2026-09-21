@@ -39,6 +39,12 @@ export interface Profile {
   updatedAt: string;
 }
 
+export interface BoiteSecreteConfig {
+  /** SHA-256 hex du code d'accès — jamais le code en clair. */
+  codeHash: string;
+  updatedAt: string;
+}
+
 export interface Signup {
   id: string;
   /** Optionnel : une inscription publique via le formulaire du site ne demande que l'email. */

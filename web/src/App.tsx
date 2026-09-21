@@ -3,6 +3,7 @@ import { api, setUnauthorizedHandler } from "./api";
 import { CrmResourcePage } from "./crm/CrmResourcePage";
 import { MessageComposer } from "./crm/MessageComposer";
 import { RESOURCE_ORDER, RESOURCES, type ResourceKey } from "./crm/schema";
+import { BoiteSecrete } from "./pages/BoiteSecrete";
 import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile";
 import { Projects } from "./pages/Projects";
@@ -10,7 +11,7 @@ import { Signups } from "./pages/Signups";
 import type { Admin } from "./types";
 
 type Section = "portfolio" | "crm";
-type PortfolioTab = "profile" | "projects" | "signups";
+type PortfolioTab = "profile" | "projects" | "signups" | "boiteSecrete";
 
 export function App() {
   const [admin, setAdmin] = useState<Admin | null>(null);
@@ -79,10 +80,17 @@ export function App() {
             >
               Inscriptions
             </button>
+            <button
+              className={`tab-button ${portfolioTab === "boiteSecrete" ? "active" : ""}`}
+              onClick={() => setPortfolioTab("boiteSecrete")}
+            >
+              Boîte secrète
+            </button>
           </div>
           {portfolioTab === "profile" && <Profile />}
           {portfolioTab === "projects" && <Projects />}
           {portfolioTab === "signups" && <Signups />}
+          {portfolioTab === "boiteSecrete" && <BoiteSecrete />}
         </>
       )}
 

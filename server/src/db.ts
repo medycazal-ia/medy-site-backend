@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { config } from "./config.js";
-import type { Admin, Profile, Project, Signup } from "./types.js";
+import type { Admin, BoiteSecreteConfig, Profile, Project, Signup } from "./types.js";
 
 function readJson<T>(filePath: string, fallback: T): T {
   if (!fs.existsSync(filePath)) return fallback;
@@ -157,6 +157,35 @@ class ProfileStore {
   }
 }
 
+// Valeur par défaut = hash du code déjà en dur dans public-site/boite-secrete.html
+// avant que cette page ne le lise depuis /api/boite-secrete (code d'origine : MEDYOUTILS26).
+const DEFAULT_BOITE_SECRETE: BoiteSecreteConfig = {
+  codeHash: "e91792f460242030884a64e627c4c93c93b40edcabd36178c1e58a26b6d887e6",
+  updatedAt: "2026-09-21T00:00:00.000Z",
+};
+
+class BoiteSecreteStore {
+  private config: BoiteSecreteConfig;
+
+  constructor(private readonly filePath: string) {
+    this.config = readJson<BoiteSecreteConfig>(filePath, DEFAULT_BOITE_SECRETE);
+  }
+
+  private persist(): void {
+    writeJsonAtomic(this.filePath, this.config);
+  }
+
+  get(): BoiteSecreteConfig {
+    return this.config;
+  }
+
+  update(codeHash: string): BoiteSecreteConfig {
+    this.config = { codeHash, updatedAt: new Date().toISOString() };
+    this.persist();
+    return this.config;
+  }
+}
+
 class SignupStore {
   private signups: Signup[];
 
@@ -195,3 +224,4 @@ export const adminStore = new AdminStore(config.adminsPath);
 export const projectStore = new ProjectStore(config.projectsPath);
 export const signupStore = new SignupStore(config.signupsPath);
 export const profileStore = new ProfileStore(config.profilePath);
+export const boiteSecreteStore = new BoiteSecreteStore(config.boiteSecretePath);

@@ -8,6 +8,7 @@ import { config } from "../config.js";
 import { HttpError } from "../httpError.js";
 import { requireAuth } from "../services/authService.js";
 import { authRouter } from "./routes/auth.js";
+import { boiteSecreteRouter } from "./routes/boiteSecrete.js";
 import { crmRouter } from "./routes/crm.js";
 import { emailRouter } from "./routes/email.js";
 import { profileRouter } from "./routes/profile.js";
@@ -36,6 +37,7 @@ export function createApp() {
   app.get("/api/config", (_req, res) => res.json({ branding: config.branding }));
   app.use("/api/auth", authRouter);
   app.use("/api/profile", profileRouter);
+  app.use("/api/boite-secrete", boiteSecreteRouter);
   app.use("/api/projects", projectsRouter);
   app.use("/api/signups", signupsRouter);
   // Données clients (CRM, Airtable) : jamais publiques, tout le routeur est protégé.

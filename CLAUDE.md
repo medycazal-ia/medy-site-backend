@@ -160,9 +160,38 @@ is never stored in the page source. **This is not real security** (fully
 bypassable via view-source + a bit of JS console work) — it's a light
 "secret box" gate for a personal site, not a protection for sensitive
 data. The unlocked state is kept in `sessionStorage` (relocks on new
-browser session, persists across reloads in the same tab). Current
-access code: `MEDYOUTILS26` (told to Medy separately — change it by
-replacing `ACCESS_CODE_HASH` with the SHA-256 hex digest of a new code).
+browser session, persists across reloads in the same tab).
+
+**The reference hash is no longer hard-coded in the page.** Medy asked
+to be able to change the code himself if he forgets it, with a "reset"
+button — so it's now server-backed:
+
+- `server/src/db.ts`'s `BoiteSecreteStore` (singleton, same shape as
+  `ProfileStore`) persists `{ codeHash, updatedAt }` at
+  `config.boiteSecretePath` (default `server/data/boite-secrete.json`).
+  Default value is the hash of the original `MEDYOUTILS26` code.
+- `server/src/api/routes/boiteSecrete.ts`: `GET /api/boite-secrete` is
+  public (returns `{ codeHash, updatedAt }` — never the plaintext code,
+  same exposure level as when it was hard-coded in the HTML source) ;
+  `PUT /api/boite-secrete` is `requireAuth`, takes `{ code }`, hashes it
+  server-side (`crypto.createHash("sha256")`, never persists the
+  plaintext) and stores the new hash. Rejects codes under 4 characters.
+- `public-site/boite-secrete.html`'s lock screen fetches the current
+  hash from that public GET on load instead of using a constant — the
+  "Ouvrir" button (`#unlock-submit`) starts `disabled` and only enables
+  once the fetch succeeds, retrying automatically every 4s on failure
+  (e.g. Render free-tier cold start) rather than either blocking forever
+  or silently treating "no hash yet" as "any code works."
+- **The actual reset UI** is `web/src/pages/BoiteSecrete.tsx`, a new
+  "Boîte secrète" tab under "Portfolio du site" in the admin (`App.tsx`)
+  — a single "Nouveau code d'accès" field + "Réinitialiser le code"
+  button, calling `api.updateBoiteSecreteCode`. Being logged into the
+  admin (separate password, recoverable via Render env vars) *is* the
+  recovery mechanism if Medy forgets the boîte secrète code — there's no
+  other reset path by design, and none was asked for.
+- Current default code is still `MEDYOUTILS26`, but Medy can now change
+  it any time from that admin tab without needing a code edit — don't
+  assume it's still `MEDYOUTILS26` in production once he's used this.
 
 Once unlocked, the page shows small cards grouped into **domain-based**
 categories (`<h2>` + its own `.tool-grid`), not by source/connector
