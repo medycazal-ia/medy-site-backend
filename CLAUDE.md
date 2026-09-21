@@ -75,6 +75,24 @@ also briefly stood in for it before this).
 unrelated codebase. tierspayant.site is referenced here only as data —
 one entry in the `projects` list, linked externally.
 
+**`tierspayant-pen.jpg` / `tierspayant-pad.jpg`**: crops taken directly
+from `tierspayant-agent.jpg` itself (the pen/notepad the character is
+already holding), not new AI generations — both ElevenLabs (daily
+free-tier image quota exhausted, again) and Gamma (no reference-image
+support on this workspace's plan, and its CDN is blocked by this
+sandbox's egress proxy so the result couldn't even be previewed before
+shipping it) were unusable when Medy asked for a bigger notepad/pen; he
+then asked to extract and enlarge the existing props instead of
+regenerating the character, which sidesteps both problems entirely.
+`tierspayant-pad.jpg`'s cream cover was recolored to a pastel medical
+green via a plain Python/Pillow script (brightness-preserving hue
+shift, masked to a hand-traced polygon of just the cover so the
+cream-colored sweater in the same crop doesn't also turn green) — no
+AI involved. Displayed on the card as two enlarged badges flanking the
+character at the bottom of the thumbnail (pen left, notepad right),
+exaggerated on purpose to represent the administrative workload of
+tiers payant work, per Medy's request.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
