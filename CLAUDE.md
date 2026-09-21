@@ -149,6 +149,38 @@ affect the editing browser's own view, never what real visitors saw.
   `api.updateCredentials` for changing the admin's own login/password.
 - Same persistence caveat as projects/signups: lost on every Render
   free-tier sleep cycle until there's a persistent disk or a real DB.
+- `DEFAULT_PROFILE` (`server/src/db.ts`) and `public-site/index.html`'s
+  own `DEFAULT_PROFILE` JS fallback were both updated together at Medy's
+  request: `firstName` is now `"Medy Harry"`, `jobTitle` is now
+  `"Consultant Digital et IA"` (was `"Consultant RH et Digital"`). This
+  only changes the **code-level default** — since the real live profile
+  lives in Render's ephemeral `server/data/profile.json` (see caveat
+  above), whatever Medy already saved via the admin "Mon profil" form in
+  production takes precedence and won't change until he re-saves it
+  there himself (or the service sleeps and falls back to this new
+  default).
+
+### CV pop-up ("Voir mon CV")
+
+`public-site/index.html` has a "Voir mon CV" button (`#cv-trigger`,
+right under the bio in the profile card) that opens an in-page modal
+(`#cv-modal-overlay`/`#cv-modal`, plain CSS + vanilla JS, no library) —
+this is what Medy called a "popote" (a garbled "pop-up"). The modal
+reuses live profile data (name, job title, bio, avatar — same source as
+the rest of the page, kept in sync from `renderPublic()`) and adds a
+video placeholder block (`#cv-video-btn`) for the video Medy said he'll
+record later about his background, travels and experience: it reads
+`data-video-url` off the button, and since that's currently empty,
+clicking it just shows a "Vidéo bientôt disponible" message instead of
+opening anything. **To wire up the real video once it exists**: set
+`data-video-url="<url>"` on `#cv-video-btn` in the HTML — no JS change
+needed, the click handler already opens whatever URL is there in a new
+tab. Closes via the × button, clicking the overlay backdrop, or Escape.
+
+No CV content (work history, dates, past roles) was invented for this —
+Medy said the actual story will be told in the video, so the modal's
+"Parcours & expériences" section stays a short pointer to that video
+rather than fabricated biographical text.
 
 ## Inscriptions
 

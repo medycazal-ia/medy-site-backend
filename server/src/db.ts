@@ -124,9 +124,9 @@ class ProjectStore {
 // codé en dur dans public-site/index.html avant que cette page ne lise ses
 // données depuis /api/profile.
 const DEFAULT_PROFILE: Profile = {
-  firstName: "Medy",
+  firstName: "Medy Harry",
   lastName: "CAZAL",
-  jobTitle: "Consultant RH et Digital",
+  jobTitle: "Consultant Digital et IA",
   email: "cazal@medy.site",
   phone: "06 74 20 16 6 62",
   bio: "J'accompagne les marques et les projets créatifs avec une communication claire, humaine et engagée.",

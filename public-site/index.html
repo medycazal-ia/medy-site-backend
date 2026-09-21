@@ -61,6 +61,9 @@
         <p id="public-function" class="mt-4 inline-block rounded-full bg-gradient-to-r from-blue-50 to-violet-50 px-3 py-1 text-xs font-bold uppercase tracking-[.14em] text-violet-700"></p>
         <h1 id="public-name" class="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900"></h1>
         <p id="public-intro" class="mt-3 max-w-sm text-sm leading-6 text-slate-600"></p>
+        <button id="cv-trigger" type="button" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2.5 text-sm font-bold text-white shadow-md hover:shadow-lg transition">
+         <i data-lucide="file-text" class="w-4 h-4" aria-hidden="true"></i> Voir mon CV
+        </button>
         <div class="w-full mt-auto pt-5 space-y-2 text-left">
          <a id="public-email" class="flex items-center gap-3 rounded-xl bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800 hover:bg-blue-100" href="#"><i data-lucide="mail" class="w-5 h-5 shrink-0" aria-hidden="true"></i><span class="truncate"></span></a> <a id="public-phone" class="flex items-center gap-3 rounded-xl bg-violet-50 px-4 py-3 text-sm font-medium text-violet-800 hover:bg-violet-100" href="#"><i data-lucide="phone" class="w-5 h-5 shrink-0" aria-hidden="true"></i><span></span></a>
         </div>
@@ -98,6 +101,21 @@
 .mc-soon:hover{border-color:#a5b4fc;box-shadow:0 20px 40px -24px rgba(109,40,217,.22);}
 .mc-soon .mc-body{justify-content:center;align-items:center;text-align:center;}
 .mc-soon-badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#ede9fe;color:#6d28d9;margin-bottom:2px;}
+
+.cv-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;z-index:100;}
+.cv-modal-overlay.open{display:flex;}
+.cv-modal{background:#fff;border-radius:24px;max-width:620px;width:100%;box-shadow:0 40px 80px -20px rgba(15,23,42,.45);overflow:hidden;margin:auto;}
+.cv-modal-head{position:relative;padding:28px 28px 20px;background:linear-gradient(135deg,#dbeafe 0%,#ede9fe 100%);}
+.cv-modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;color:#172554;}
+.cv-modal-close:hover{background:#fff;}
+.cv-modal-body{padding:24px 28px 28px;}
+.cv-section-title{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6d28d9;margin:22px 0 8px;}
+.cv-section-title:first-child{margin-top:0;}
+.cv-text{font-size:13.5px;line-height:1.6;color:#475569;}
+.cv-video-frame{position:relative;margin-top:10px;border-radius:16px;overflow:hidden;background:linear-gradient(150deg,#172554 0%,#3730a3 100%);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;width:100%;padding:0;}
+.cv-video-play{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;color:#fff;}
+.cv-video-caption{position:absolute;left:16px;right:16px;bottom:12px;color:#e0e7ff;font-size:12px;font-weight:600;text-align:left;}
+.cv-video-toast{margin-top:8px;font-size:12px;font-weight:700;color:#6d28d9;min-height:16px;}
 </style>
   <section id="portfolio-section" class="mc-section">
    <div class="mc-title">Mes créations</div>
@@ -149,12 +167,42 @@
     </a>
    </div>
   </section>
+
+  <div id="cv-modal-overlay" class="cv-modal-overlay">
+   <div class="cv-modal" role="dialog" aria-modal="true" aria-labelledby="cv-modal-name">
+    <div class="cv-modal-head">
+     <button id="cv-modal-close" type="button" class="cv-modal-close" aria-label="Fermer"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button>
+     <div class="flex items-center gap-4">
+      <img id="cv-modal-avatar" src="avatar.jpg" alt="" class="w-16 h-16 rounded-2xl shadow ring-4 ring-white object-cover" loading="lazy">
+      <div>
+       <h2 id="cv-modal-name" class="text-xl font-extrabold tracking-tight text-slate-900"></h2>
+       <p id="cv-modal-function" class="text-xs font-bold uppercase tracking-[.1em] text-violet-700 mt-1"></p>
+      </div>
+     </div>
+    </div>
+    <div class="cv-modal-body">
+     <div class="cv-section-title">À propos</div>
+     <p id="cv-modal-bio" class="cv-text"></p>
+
+     <div class="cv-section-title">Parcours &amp; expériences</div>
+     <p class="cv-text">Le détail de mon parcours, mes expériences professionnelles et mes voyages — racontés en vidéo, juste en dessous.</p>
+
+     <div class="cv-section-title">Vidéo de présentation</div>
+     <button id="cv-video-btn" type="button" class="cv-video-frame" data-video-url="" aria-describedby="cv-video-toast">
+      <span class="cv-video-play"><i data-lucide="play" class="w-6 h-6" aria-hidden="true"></i></span>
+      <span class="cv-video-caption">Medy raconte son parcours, ses voyages et ses expériences</span>
+     </button>
+     <p id="cv-video-toast" class="cv-video-toast" role="status" aria-live="polite"></p>
+    </div>
+   </div>
+  </div>
+
   <script>
     // Valeurs de secours si /api/profile est injoignable (service en veille,
     // hors-ligne) — reprend le profil par défaut du backend.
     const DEFAULT_PROFILE = {
-      firstName:"Medy",lastName:"CAZAL",email:"cazal@medy.site",phone:"06 74 20 16 6 62",
-      jobTitle:"Consultant RH et Digital",siteTitle:"Profil Connecté",
+      firstName:"Medy Harry",lastName:"CAZAL",email:"cazal@medy.site",phone:"06 74 20 16 6 62",
+      jobTitle:"Consultant Digital et IA",siteTitle:"Profil Connecté",
       bio:"J'accompagne les marques et les projets créatifs avec une communication claire, humaine et engagée.",
       photoUrl:""
     };
@@ -176,6 +224,11 @@
       const email=document.getElementById("public-email"), phone=document.getElementById("public-phone");
       email.href="mailto:"+p.email; email.querySelector("span").textContent=p.email;
       phone.href="tel:"+p.phone.replace(/\s/g,""); phone.querySelector("span").textContent=p.phone;
+
+      document.getElementById("cv-modal-name").textContent=p.firstName+" "+p.lastName;
+      document.getElementById("cv-modal-function").textContent=p.jobTitle;
+      document.getElementById("cv-modal-bio").textContent=p.bio||"";
+      document.getElementById("cv-modal-avatar").src=p.photoUrl||"avatar.jpg";
 
       safeLucide();
     }
@@ -206,6 +259,30 @@
           return;
         }
         logoClickTimer=setTimeout(()=>{ logoClicks=0; },2000);
+      });
+
+      const cvOverlay=document.getElementById("cv-modal-overlay");
+      function openCvModal(){
+        cvOverlay.classList.add("open");
+        document.body.style.overflow="hidden";
+      }
+      function closeCvModal(){
+        cvOverlay.classList.remove("open");
+        document.body.style.overflow="";
+      }
+      document.getElementById("cv-trigger").addEventListener("click", openCvModal);
+      document.getElementById("cv-modal-close").addEventListener("click", closeCvModal);
+      cvOverlay.addEventListener("click", (event)=>{ if(event.target===cvOverlay) closeCvModal(); });
+      document.addEventListener("keydown", (event)=>{ if(event.key==="Escape" && cvOverlay.classList.contains("open")) closeCvModal(); });
+
+      document.getElementById("cv-video-btn").addEventListener("click", function(){
+        const url=this.dataset.videoUrl;
+        const toast=document.getElementById("cv-video-toast");
+        if(url){
+          window.open(url,"_blank","noopener,noreferrer");
+        } else {
+          toast.textContent="Vidéo bientôt disponible — revenez plus tard !";
+        }
       });
 
       document.getElementById("signup-form").addEventListener("submit", async (event)=>{
