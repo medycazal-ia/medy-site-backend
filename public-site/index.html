@@ -89,6 +89,10 @@
 .mc-live-badge{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:6px;background:rgba(23,37,84,.78);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px 5px 8px;border-radius:999px;}
 .mc-live-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:mc-pulse-dot 1.8s ease-in-out infinite;}
 @keyframes mc-pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.6);}50%{box-shadow:0 0 0 5px rgba(34,197,94,0);}}
+.access-locked{background:rgba(220,38,38,.85)!important;transition:background .25s ease;}
+.access-locked .mc-live-dot{background:#fecaca;animation:none;}
+.access-unlocked{background:rgba(21,128,61,.85)!important;transition:background .25s ease;}
+.access-unlocked .mc-live-dot{background:#4ade80;animation:none;}
 .mc-dash{position:absolute;inset:14px;background:rgba(255,255,255,.92);border-radius:14px;padding:10px 12px;box-shadow:0 10px 24px -12px rgba(23,37,84,.25);display:flex;flex-direction:column;gap:7px;}
 .mc-row{display:flex;align-items:center;gap:8px;}
 .mc-bar{height:7px;border-radius:4px;background:#e2e8f0;flex:1;}
@@ -122,7 +126,7 @@
    <div class="mc-grid">
     <a class="mc-card" href="boite-secrete.html">
      <div class="mc-thumb" style="background:linear-gradient(150deg,#fdf6e9 0%,#f0e6d2 100%);display:flex;align-items:flex-end;justify-content:center;">
-      <div class="mc-live-badge"><span class="mc-live-dot"></span> Accès privé</div>
+      <div id="access-badge" class="mc-live-badge access-locked"><span class="mc-live-dot"></span> Accès privé</div>
       <div style="position:absolute;top:12px;left:12px;width:34px;height:34px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -4px rgba(23,37,84,.35);">
        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#c2410c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"></path><path d="M17 7V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2"></path><path d="M2 13h20"></path><path d="M12 13v2"></path></svg>
       </div>
@@ -260,6 +264,17 @@
         }
         logoClickTimer=setTimeout(()=>{ logoClicks=0; },2000);
       });
+
+      // Reflète l'état de déverrouillage de "Ma boîte secrète" (même clé
+      // sessionStorage que boite-secrete.html) : rouge par défaut, vert si
+      // déjà déverrouillée dans cet onglet.
+      try {
+        const accessBadge=document.getElementById("access-badge");
+        if(accessBadge && sessionStorage.getItem("boite-secrete-unlocked")==="1"){
+          accessBadge.classList.remove("access-locked");
+          accessBadge.classList.add("access-unlocked");
+        }
+      } catch(e) {}
 
       const cvOverlay=document.getElementById("cv-modal-overlay");
       function openCvModal(){

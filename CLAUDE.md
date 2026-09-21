@@ -118,6 +118,21 @@ in `boite-secrete.html` following the same markup pattern (`.tool-icon`
 background/color pair should stay visually distinct from existing
 cards — see the inline `style=` on each for the palette used so far).
 
+**Red/green access badge**: both the "Accès privé" badge on the
+index.html card (`#access-badge`) and the one on `boite-secrete.html`'s
+lock screen (`#lock-status-badge`) toggle between `.access-locked`/
+`.status-locked` (red) and `.access-unlocked`/`.status-unlocked` (green)
+based on the same `sessionStorage["boite-secrete-unlocked"]` flag —
+red by default, green once unlocked this session. On `boite-secrete.html`,
+submitting the correct code flips the badge to green **first**, then
+waits 450ms (`setTimeout(unlock, 450)`, form inputs disabled meanwhile)
+before actually revealing `#tools-screen` — a deliberate "green flash
+before the page opens" requested by Medy, not a loading delay for any
+real async work. `index.html`'s badge is only ever read on page load
+(no live cross-tab sync) — it reflects whatever `sessionStorage` said at
+the time `index.html` itself was loaded, e.g. after navigating back
+from `boite-secrete.html` in the same tab.
+
 ## Profil public
 
 The profile card on `public-site/index.html` (name, job title, bio,
