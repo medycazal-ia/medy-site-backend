@@ -143,20 +143,31 @@ browser session, persists across reloads in the same tab). Current
 access code: `MEDYOUTILS26` (told to Medy separately — change it by
 replacing `ACCESS_CODE_HASH` with the SHA-256 hex digest of a new code).
 
-Once unlocked, the page shows two grids of small cards, each linking
+Once unlocked, the page shows three grids of small cards, each linking
 out to a tool's own site (real backend integration, not deep-linked):
-"Mes outils" (Higgsfield, Canva, Resend, Render, Vercel, Make, Airtable
-— tools Medy named directly, whether or not they happen to be Claude
-MCP connectors) and "Connectés à Claude" (ElevenLabs, Gamma, Gmail,
+"Mes outils" (Higgsfield, Canva, Resend, Render, Vercel, Make, Airtable,
+Supabase, CustomJS, Twilio, MyEasyOptic, Google Cloud, DNSChecker, LWS
+Panel — tools Medy named directly, whether or not they happen to be
+Claude MCP connectors), "Connectés à Claude" (ElevenLabs, Gamma, Gmail,
 Google Calendar, Google Drive, HyperFrames by HeyGen, Lovable, Slack,
 Stripe, Webflow, Zoom — every connector that came back `connected: true`
 from this Claude session's `ListConnectors` at the time, minus Canva/
 Make/Airtable already listed under "Mes outils" to avoid duplicates),
-plus a dashed "D'autres bientôt" placeholder card at the very end. Medy
-said this list will grow; add new tool cards to the relevant `.tool-grid`
-in `boite-secrete.html` following the same markup pattern (`.tool-icon`
-background/color pair should stay visually distinct from existing
-cards — see the inline `style=` on each for the palette used so far).
+and "Claude & Anthropic" (claude.ai, Claude Platform at
+platform.claude.com — formerly console.anthropic.com, the API/developer
+console — Claude Code, Claude Design at claude.ai/design; these four
+share one warm-orange `.tool-icon` background `#fff7ed` with a
+different accent shade each, a deliberate "same company, sibling
+products" visual grouping), plus a dashed "D'autres bientôt" placeholder
+card at the very end of that last grid. Medy said this list will grow;
+add new tool cards to the relevant `.tool-grid` in `boite-secrete.html`
+following the same markup pattern (`.tool-icon` background/color pair
+should stay visually distinct from existing cards in the same grid —
+see the inline `style=` on each for the palette used so far). URLs for
+tools not already known with certainty (MyEasyOptic, LWS Panel,
+CustomJS, the exact current Claude Platform/Design URLs) were verified
+via `WebSearch` before being written into the page, rather than
+guessed.
 
 **Red/green access badge**: both the "Accès privé" badge on the
 index.html card (`#access-badge`) and the one on `boite-secrete.html`'s
