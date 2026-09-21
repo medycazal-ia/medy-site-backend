@@ -93,6 +93,28 @@ character at the bottom of the thumbnail (pen left, notepad right),
 exaggerated on purpose to represent the administrative workload of
 tiers payant work, per Medy's request.
 
+**"Medy Audite" card (4th "Mes créations" card)**: links to
+`https://naiom-platform.onrender.com/agents/fireflies` (Medy gave this
+URL directly — a Fireflies-style meeting-transcription agent on his
+`naiom-platform` deployment, a separate project from this repo). Same
+situation as the tiers payant card: ElevenLabs' free-tier image quota
+was exhausted again when Medy asked for the character wearing
+headphones and holding a microphone, so no new character art was
+generated. `public-site/audit-agent.jpg` is a plain copy of
+`avatar.jpg` (the headshot crop) — a deliberate choice over reusing
+`studio-agent.jpg`/`tierspayant-agent.jpg`, since those two are already
+each displayed on their own card and would have looked like a
+duplicate/mistake sitting on a 4th one too. The headphones/microphone
+theme is conveyed the same way as the other two workarounds: small
+icon badges (inline SVG, lucide-style paths, not photos this time since
+there's nothing to crop) in the top corners of the thumbnail rather
+than edited into the character itself. If ElevenLabs quota ever frees
+up and Medy wants a "real" edited character for this card (headphones
+worn, mic in hand) instead of this badge workaround, that's the
+natural follow-up — `audit-agent.jpg` is a separate file from
+`avatar.jpg` specifically so it can be swapped later without touching
+the profile photo.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
