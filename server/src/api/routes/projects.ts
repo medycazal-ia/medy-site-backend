@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { Router } from "express";
 import { projectStore } from "../../db.js";
-import { requireAuth } from "../../services/authService.js";
+import { requireAuth, requireSessionOrApiKey } from "../../services/authService.js";
 import type { Project, ProjectStatus } from "../../types.js";
 
 export const projectsRouter = Router();
@@ -14,7 +14,7 @@ projectsRouter.get("/", (_req, res) => {
 });
 
 // Admin : tous les projets, y compris les brouillons, pour la gestion.
-projectsRouter.get("/all", requireAuth, (_req, res) => {
+projectsRouter.get("/all", requireSessionOrApiKey, (_req, res) => {
   res.json({ projects: projectStore.list() });
 });
 

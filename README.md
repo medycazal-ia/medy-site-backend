@@ -31,6 +31,26 @@ Audits, Propositions, Paiements, Feuille de route, Messages) : formulaire
 d'ajout/modification, tableau, suppression, et sélection des liens
 (entreprise d'un contact, projet d'un RDV, etc.) par simple clic.
 
+## Accès par clé d'API (Automator, scripts, Make…)
+
+Pour qu'un outil d'automatisation appelle l'API sans passer par la connexion admin (cookie), définir la variable d'env **`AUTOMATOR_API_KEY`** (32 caractères minimum, secrète — par ex. `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`), puis envoyer :
+
+```
+Authorization: Bearer <clé>      (ou  X-Api-Key: <clé>)
+```
+
+| Accessible avec la clé | Jamais avec la clé |
+|---|---|
+| `/api/crm/*` (les 9 ressources, lecture + écriture) | `/api/auth/*` (compte, mot de passe) |
+| `GET /api/signups` (liste des inscriptions) | `PUT /api/profile`, `PUT /api/boite-secrete` |
+| `GET /api/projects/all` | `/api/email/send`, `/api/twilio/*` (envois) |
+| | `DELETE /api/signups/:id`, écritures sur `/api/projects` |
+
+- **`AUTOMATOR_API_KEY_READONLY=1`** : la clé ne peut plus qu'effectuer des requêtes GET/HEAD (écritures refusées en 403).
+- Sans variable (ou clé trop courte) : accès par clé désactivé.
+- Chaque appel authentifié par clé est journalisé (`[api-key] METHODE /chemin`, sans la clé). Pour révoquer : changer la valeur de la variable et redéployer.
+- Côté Automator : connecteur `medysite` (clé stockée dans le coffre : `{{secrets.MEDYSITE_API_KEY}}`).
+
 ## Messagerie & téléphonie (Twilio)
 
 `/api/twilio/messages` (SMS + WhatsApp) et `/api/twilio/call`

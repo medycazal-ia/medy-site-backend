@@ -37,6 +37,18 @@ export const config = {
     sessionTtlMs: 12 * 60 * 60 * 1000, // 12h
   },
 
+  // Accès machine-à-machine (ex. Automator) : clé d'API envoyée en
+  // `Authorization: Bearer <clé>` (ou `X-Api-Key`). Désactivé tant que
+  // AUTOMATOR_API_KEY n'est pas défini (32 caractères minimum). Donne accès
+  // au CRM, à la liste des inscriptions et aux projets — jamais au compte
+  // admin, à l'envoi d'emails/SMS ni aux modifications du profil.
+  // AUTOMATOR_API_KEY_READONLY=1 limite la clé aux requêtes GET/HEAD.
+  apiKey: {
+    value: process.env.AUTOMATOR_API_KEY ?? "",
+    readOnly: ["1", "true"].includes((process.env.AUTOMATOR_API_KEY_READONLY ?? "").toLowerCase()),
+    minLength: 32,
+  },
+
   // CRM (gestion clients) : stocké dans Airtable plutôt qu'en JSON local,
   // voir server/src/airtable/. Base "Medy CRM — Clients & Projets".
   airtable: {

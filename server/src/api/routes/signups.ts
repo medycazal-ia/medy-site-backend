@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { Router } from "express";
 import { signupStore } from "../../db.js";
-import { requireAuth } from "../../services/authService.js";
+import { requireAuth, requireSessionOrApiKey } from "../../services/authService.js";
 
 export const signupsRouter = Router();
 
@@ -33,8 +33,8 @@ signupsRouter.post("/", (req, res) => {
   res.status(201).json({ signup });
 });
 
-// Admin : consultation des inscriptions.
-signupsRouter.get("/", requireAuth, (_req, res) => {
+// Admin (session ou clé d'API, ex. Automator) : consultation des inscriptions.
+signupsRouter.get("/", requireSessionOrApiKey, (_req, res) => {
   res.json({ signups: signupStore.list() });
 });
 

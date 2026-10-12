@@ -17,6 +17,8 @@ services:
         generateValue: true
       - key: AIRTABLE_API_KEY
         sync: false
+      - key: AUTOMATOR_API_KEY
+        sync: false
       - key: AIRTABLE_BASE_ID
         value: app2Zji7fTJLN9aAg
       - key: TWILIO_ACCOUNT_SID
