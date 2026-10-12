@@ -106,6 +106,27 @@
 .mc-soon .mc-body{justify-content:center;align-items:center;text-align:center;}
 .mc-soon-badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#ede9fe;color:#6d28d9;margin-bottom:2px;}
 
+.mc-layout{display:flex;gap:20px;align-items:flex-start;}
+@media (max-width:860px){.mc-layout{flex-direction:column;}}
+.mc-pinned{flex:0 0 270px;width:270px;}
+@media (max-width:860px){.mc-pinned{width:100%;flex:1 1 auto;}}
+.mc-carousel{flex:1 1 0;min-width:0;width:100%;}
+.mc-carousel-viewport{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.mc-carousel-viewport::-webkit-scrollbar{display:none;}
+.mc-carousel-track{display:flex;gap:18px;padding:3px 3px 10px;}
+.mc-carousel-track .mc-card{flex:0 0 260px;scroll-snap-align:start;}
+@media (max-width:560px){.mc-carousel-track .mc-card{flex-basis:82vw;}}
+.mc-carousel-controls{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap;}
+.mc-carousel-toggle{width:32px;height:32px;border-radius:50%;border:1px solid #dbe4f4;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#2563eb;flex-shrink:0;padding:0;}
+.mc-carousel-toggle:hover{background:#eef2ff;}
+.mc-carousel-dots{display:flex;gap:6px;flex-wrap:wrap;}
+.mc-dot{width:22px;height:22px;border-radius:50%;background:#eef2ff;color:#64748b;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .2s ease;cursor:pointer;border:none;flex-shrink:0;}
+.mc-dot:hover{background:#dbe4ff;}
+.mc-dot.active{background:#22c55e;color:#fff;transform:scale(1.12);}
+.mc-carousel-counter{font-size:12px;font-weight:700;color:#475569;white-space:nowrap;}
+.mc-carousel-hint{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#94a3b8;margin-left:auto;white-space:nowrap;}
+@media (max-width:560px){.mc-carousel-hint{display:none;}}
+
 .cv-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;z-index:100;}
 .cv-modal-overlay.open{display:flex;}
 .cv-modal{background:#fff;border-radius:24px;max-width:620px;width:100%;box-shadow:0 40px 80px -20px rgba(15,23,42,.45);overflow:hidden;margin:auto;}
@@ -123,24 +144,29 @@
 </style>
   <section id="portfolio-section" class="mc-section">
    <div class="mc-title">Mes créations</div>
-   <div class="mc-grid">
-    <a class="mc-card" href="boite-secrete.html">
-     <div class="mc-thumb" style="background:linear-gradient(150deg,#fdf6e9 0%,#f0e6d2 100%);display:flex;align-items:flex-end;justify-content:center;">
-      <div id="access-badge" class="mc-live-badge access-locked"><span class="mc-live-dot"></span> Accès privé</div>
-      <div style="position:absolute;bottom:8px;right:calc(50% - 82px);width:60px;height:60px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px -4px rgba(23,37,84,.4);">
-       <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#c2410c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"></path><path d="M17 7V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2"></path><path d="M2 13h20"></path><path d="M12 13v2"></path></svg>
+   <div class="mc-layout">
+    <div class="mc-pinned">
+     <a class="mc-card" href="boite-secrete.html">
+      <div class="mc-thumb" style="background:linear-gradient(150deg,#fdf6e9 0%,#f0e6d2 100%);display:flex;align-items:flex-end;justify-content:center;">
+       <div id="access-badge" class="mc-live-badge access-locked"><span class="mc-live-dot"></span> Accès privé</div>
+       <div style="position:absolute;bottom:8px;right:calc(50% - 82px);width:60px;height:60px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px -4px rgba(23,37,84,.4);">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#c2410c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"></path><path d="M17 7V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2"></path><path d="M2 13h20"></path><path d="M12 13v2"></path></svg>
+       </div>
+       <img src="tierspayant-agent.jpg" alt="Personnage animé de Medy, chauve avec des lunettes rondes oranges, entouré de ses outils de création" style="height:100%;width:auto;object-fit:contain;" loading="lazy">
       </div>
-      <img src="tierspayant-agent.jpg" alt="Personnage animé de Medy, chauve avec des lunettes rondes oranges, entouré de ses outils de création" style="height:100%;width:auto;object-fit:contain;" loading="lazy">
-     </div>
-     <div class="mc-body">
-      <span class="mc-soon-badge" style="background:#ffedd5;color:#c2410c;">Boîte à outils</span>
-      <div class="mc-card-title">Medy est outillé</div>
-      <div class="mc-desc">Une multitude d'outils différents pour tous les domaines d'activité.</div>
-      <div class="mc-open">Découvrir
-       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      <div class="mc-body">
+       <span class="mc-soon-badge" style="background:#ffedd5;color:#c2410c;">Boîte à outils</span>
+       <div class="mc-card-title">Medy est outillé</div>
+       <div class="mc-desc">Une multitude d'outils différents pour tous les domaines d'activité.</div>
+       <div class="mc-open">Découvrir
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+       </div>
       </div>
-     </div>
-    </a>
+     </a>
+    </div>
+    <div class="mc-carousel" id="mc-carousel">
+     <div class="mc-carousel-viewport" id="mc-carousel-viewport">
+      <div class="mc-carousel-track" id="mc-carousel-track">
     <a class="mc-card" href="https://emma-agt.onrender.com/agents/ecommerce" target="_blank" rel="noopener noreferrer">
      <div class="mc-thumb" style="background:linear-gradient(150deg,#fdf6e9 0%,#f0e6d2 100%);display:flex;align-items:flex-end;justify-content:center;">
       <div class="mc-live-badge"><span class="mc-live-dot"></span> En ligne</div>
@@ -237,6 +263,21 @@
       </div>
      </div>
     </a>
+      </div>
+     </div>
+     <div class="mc-carousel-controls">
+      <button type="button" class="mc-carousel-toggle" id="mc-carousel-toggle" aria-label="Mettre en pause le défilement automatique" title="Mettre en pause">
+       <svg id="mc-pause-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="5" y="4" width="4" height="16"></rect><rect x="15" y="4" width="4" height="16"></rect></svg>
+       <svg id="mc-play-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:none;"><polygon points="6 4 20 12 6 20"></polygon></svg>
+      </button>
+      <div class="mc-carousel-dots" id="mc-carousel-dots"></div>
+      <div class="mc-carousel-counter" id="mc-carousel-counter">1 / 6</div>
+      <div class="mc-carousel-hint">
+       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+       Faites glisser pour voir plus
+      </div>
+     </div>
+    </div>
    </div>
   </section>
 
@@ -400,7 +441,117 @@
       const publicContentGrid=document.getElementById("public-content-grid");
       if(portfolioSection && publicContentGrid) publicContentGrid.appendChild(portfolioSection);
       loadProfile();
+      initPortfolioCarousel();
     });
+
+    function initPortfolioCarousel(){
+      const viewport=document.getElementById("mc-carousel-viewport");
+      const track=document.getElementById("mc-carousel-track");
+      const dotsBox=document.getElementById("mc-carousel-dots");
+      const counter=document.getElementById("mc-carousel-counter");
+      const toggleBtn=document.getElementById("mc-carousel-toggle");
+      const pauseIcon=document.getElementById("mc-pause-icon");
+      const playIcon=document.getElementById("mc-play-icon");
+      if(!viewport || !track || !dotsBox || !counter || !toggleBtn) return;
+
+      const cards=[...track.querySelectorAll(".mc-card")];
+      const total=cards.length;
+      if(total===0) return;
+
+      const dots=cards.map((card,i)=>{
+        const dot=document.createElement("button");
+        dot.type="button";
+        dot.className="mc-dot";
+        dot.textContent=String(i+1);
+        dot.setAttribute("aria-label","Aller à la création "+(i+1)+" sur "+total);
+        dot.addEventListener("click",()=>{
+          pauseAutoplay();
+          card.scrollIntoView({behavior:"smooth",inline:"start",block:"nearest"});
+        });
+        dotsBox.appendChild(dot);
+        return dot;
+      });
+
+      let activeIndex=0;
+      let autoplayTimer=null;
+      let autoplayPaused=false;
+      const AUTOPLAY_DELAY_MS=4200;
+
+      function setActive(index){
+        activeIndex=index;
+        dots.forEach((dot,i)=>dot.classList.toggle("active",i===index));
+        counter.textContent=(index+1)+" / "+total;
+      }
+
+      function computeActiveFromScroll(){
+        const scrollLeft=viewport.scrollLeft;
+        let closest=0;
+        let closestDist=Infinity;
+        cards.forEach((card,i)=>{
+          const dist=Math.abs(card.offsetLeft-track.offsetLeft-scrollLeft);
+          if(dist<closestDist){closestDist=dist;closest=i;}
+        });
+        return closest;
+      }
+
+      let scrollSyncTimer=null;
+      viewport.addEventListener("scroll",()=>{
+        if(scrollSyncTimer) clearTimeout(scrollSyncTimer);
+        scrollSyncTimer=setTimeout(()=>{
+          setActive(computeActiveFromScroll());
+        },120);
+      },{passive:true});
+
+      function scrollToIndex(index){
+        const card=cards[index];
+        if(!card) return;
+        viewport.scrollTo({left:card.offsetLeft-track.offsetLeft,behavior:"smooth"});
+      }
+
+      function advance(){
+        const next=(activeIndex+1)%total;
+        scrollToIndex(next);
+        setActive(next);
+      }
+
+      function startAutoplay(){
+        if(autoplayTimer) return;
+        autoplayTimer=setInterval(advance,AUTOPLAY_DELAY_MS);
+      }
+      function stopAutoplay(){
+        if(autoplayTimer){clearInterval(autoplayTimer);autoplayTimer=null;}
+      }
+      function pauseAutoplay(){
+        autoplayPaused=true;
+        stopAutoplay();
+        pauseIcon.style.display="none";
+        playIcon.style.display="";
+        toggleBtn.setAttribute("aria-label","Reprendre le défilement automatique");
+        toggleBtn.title="Reprendre";
+      }
+      function resumeAutoplay(){
+        autoplayPaused=false;
+        startAutoplay();
+        pauseIcon.style.display="";
+        playIcon.style.display="none";
+        toggleBtn.setAttribute("aria-label","Mettre en pause le défilement automatique");
+        toggleBtn.title="Mettre en pause";
+      }
+
+      toggleBtn.addEventListener("click",()=>{
+        if(autoplayPaused) resumeAutoplay();
+        else pauseAutoplay();
+      });
+
+      ["pointerdown","touchstart","wheel"].forEach(evt=>{
+        viewport.addEventListener(evt,()=>{
+          if(!autoplayPaused) pauseAutoplay();
+        },{passive:true});
+      });
+
+      setActive(0);
+      startAutoplay();
+    }
   </script>
 
 </body></html>

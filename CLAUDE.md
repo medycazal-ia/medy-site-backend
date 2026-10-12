@@ -180,6 +180,51 @@ default framing, so the standard `crop((380,0,900,720))` → 640px width
 echo reine-cloud's real brand gold (`#D9A93A` per its own CLAUDE.md)
 without reusing medy.site's existing amber/orange badges exactly.
 
+**"Mes créations" carousel**: once there were 7 cards the plain 3-column
+grid stopped fitting ("on ne voit pas la carte" — Medy couldn't actually
+see all of them anymore), so `public-site/index.html`'s portfolio section
+was restructured from one flat `.mc-grid` into `.mc-layout` = `.mc-pinned`
+(the first card, "Medy est outillé" / `boite-secrete.html`, kept outside
+the carousel on purpose — it's the one card Medy wants always visible,
+not cycling away) + `.mc-carousel` (everything else — currently 6 cards,
+and every future card goes here too, no JS changes needed, it just reads
+however many `.mc-card` elements exist inside `#mc-carousel-track` at
+init time). The carousel itself is native CSS scroll-snap
+(`scroll-snap-type:x mandatory` on `.mc-carousel-viewport`,
+`scroll-snap-align:start` on each card) — no slider library — driven by
+a small vanilla-JS `initPortfolioCarousel()` (bottom of the page's
+`<script>` block, called once after `DOMContentLoaded`/`loadProfile()`):
+a `setInterval` every 4200ms calls `scrollTo({behavior:"smooth"})` to the
+next card; a debounced `scroll` listener (120ms) recomputes which card is
+closest to `scrollLeft` so the active index stays correct whether the
+scroll was autoplay- or user-driven (drag/swipe/trackpad all fire native
+`scroll` events, no separate gesture code needed); `pointerdown`/
+`touchstart`/`wheel` on the viewport call `pauseAutoplay()` so grabbing
+the carousel to swipe freely always stops the clock; a round play/pause
+button (`#mc-carousel-toggle`, swaps two inline SVGs) lets a visitor stop
+or restart it explicitly; numbered dots (`#mc-carousel-dots`, generated
+one per card at init, not hard-coded) turn green (`.mc-dot.active`,
+`#22c55e`) for whichever card is active and double as click-to-jump
+controls; a text counter (`#mc-carousel-counter`, "2 / 6") and a
+"Faites glisser pour voir plus" hint with a chevron icon (hidden under
+560px, where there's no room and the scroll-snap swipe is self-evident
+on a touch screen anyway) signal that there's more to see than what's on
+screen. **One real bug caught during verification, worth knowing about
+if this ever gets refactored**: `.mc-carousel{flex:1 1 0;min-width:0;}`
+alone is not enough to constrain the viewport's width once `.mc-layout`
+switches to `flex-direction:column` under 860px — with
+`align-items:flex-start` (needed so `.mc-pinned` doesn't stretch to the
+carousel's height), a flex item's cross-axis size shrinks-to-fit its
+content instead of filling the container once the layout stacks, so the
+scroll viewport silently grew to the full unclipped track width (1600px+)
+and nothing ever appeared to overflow, scroll, or snap — dot clicks and
+autoplay both looked like no-ops because `scrollLeft` genuinely couldn't
+move. Fixed with an explicit `width:100%` on `.mc-carousel` (verified via
+Puppeteer at 1280px, 800px and 390px widths, checking
+`viewport.clientWidth` actually tracks its parent instead of its
+content). Don't drop that `width:100%` if `.mc-layout`'s flex-direction
+or align-items ever change.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
