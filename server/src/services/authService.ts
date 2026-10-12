@@ -101,3 +101,68 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
   req.admin = { id: admin.id, username: admin.username };
   next();
 }
+
+// ---------------------------------------------------------------------------
+// Clé d'API (Automator & co) — voir config.apiKey. Réservée aux routes qui
+// utilisent requireSessionOrApiKey ; requireAuth (compte, profil, envois)
+// reste strictement limité à la session admin.
+// ---------------------------------------------------------------------------
+
+const sha256 = (value: string) => crypto.createHash("sha256").update(value).digest();
+const apiKeyFailures = new Map<string, { count: number; until: number }>();
+const MAX_API_KEY_FAILURES = 10;
+const API_KEY_LOCK_MS = 5 * 60 * 1000;
+let warnedWeakKey = false;
+
+function apiKeyEnabled(): boolean {
+  const { value, minLength } = config.apiKey;
+  if (!value) return false;
+  if (value.length < minLength) {
+    if (!warnedWeakKey) {
+      warnedWeakKey = true;
+      console.warn(`[auth] AUTOMATOR_API_KEY ignorée : ${minLength} caractères minimum.`);
+    }
+    return false;
+  }
+  return true;
+}
+
+function presentedApiKey(req: Request): string | undefined {
+  const header = req.get("authorization");
+  if (header && /^Bearer\s+/i.test(header)) return header.replace(/^Bearer\s+/i, "").trim();
+  return req.get("x-api-key")?.trim() || undefined;
+}
+
+/** Session admin (cookie) OU clé d'API valide. */
+export function requireSessionOrApiKey(req: Request, res: Response, next: NextFunction): void {
+  const session = verifySessionToken(req.cookies?.[SESSION_COOKIE]);
+  const admin = session ? adminStore.findById(session.adminId) : undefined;
+  if (admin) {
+    req.admin = { id: admin.id, username: admin.username };
+    return next();
+  }
+
+  const key = presentedApiKey(req);
+  if (key && apiKeyEnabled()) {
+    if (crypto.timingSafeEqual(sha256(key), sha256(config.apiKey.value))) {
+      // Une clé correcte passe toujours : le verrou ci-dessous ne vise que les essais erronés
+      // (derrière le proxy de Render, req.ip peut être partagé — il ne doit pas bloquer le vrai client).
+      if (config.apiKey.readOnly && !["GET", "HEAD"].includes(req.method)) {
+        res.status(403).json({ error: "Clé d'API en lecture seule" });
+        return;
+      }
+      req.admin = { id: "api-key", username: "api-key" };
+      console.log(`[api-key] ${req.method} ${req.baseUrl}${req.path}`);
+      return next();
+    }
+    const ip = req.ip ?? "?";
+    const failures = apiKeyFailures.get(ip);
+    if (failures && failures.until > Date.now()) {
+      res.status(429).json({ error: "Trop de tentatives, réessayez plus tard" });
+      return;
+    }
+    const count = (failures?.count ?? 0) + 1;
+    apiKeyFailures.set(ip, count >= MAX_API_KEY_FAILURES ? { count: 0, until: Date.now() + API_KEY_LOCK_MS } : { count, until: 0 });
+  }
+  res.status(401).json({ error: "Authentification requise" });
+}

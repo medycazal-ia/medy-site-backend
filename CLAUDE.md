@@ -27,6 +27,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   (admin-only, Airtable-backed CRM), `/api/twilio/*` and `/api/email/send`
   (admin-only sends + Twilio's public signature-verified webhooks).
 
+**API-key access (Automator, machine-to-machine)**: `requireSessionOrApiKey`
+(`services/authService.ts`) accepts the admin session cookie *or* an
+`Authorization: Bearer <key>` / `X-Api-Key` header equal to env
+`AUTOMATOR_API_KEY` (≥ 32 chars, constant-time compare; optional
+`AUTOMATOR_API_KEY_READONLY=1` → GET/HEAD only). It is applied **only** to
+`/api/crm/*`, `GET /api/signups` and `GET /api/projects/all` — deliberately
+never to `requireAuth` routes (account/password, profile, email/SMS sends,
+deletions). Keep it that way when adding routes. Tests: `tests/apiKey.test.ts`.
+
 The React admin app (`web/`) covers portfolio/signups management, the 9
 CRM resources (generic schema-driven CRUD — see "CRM admin UI" below),
 and a Twilio composer (send SMS/WhatsApp, click-to-call) on the Messages

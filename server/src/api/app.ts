@@ -6,7 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { config } from "../config.js";
 import { HttpError } from "../httpError.js";
-import { requireAuth } from "../services/authService.js";
+import { requireAuth, requireSessionOrApiKey } from "../services/authService.js";
 import { authRouter } from "./routes/auth.js";
 import { boiteSecreteRouter } from "./routes/boiteSecrete.js";
 import { crmRouter } from "./routes/crm.js";
@@ -40,8 +40,9 @@ export function createApp() {
   app.use("/api/boite-secrete", boiteSecreteRouter);
   app.use("/api/projects", projectsRouter);
   app.use("/api/signups", signupsRouter);
-  // Données clients (CRM, Airtable) : jamais publiques, tout le routeur est protégé.
-  app.use("/api/crm", requireAuth, crmRouter);
+  // Données clients (CRM, Airtable) : jamais publiques, tout le routeur est protégé
+  // (session admin ou clé d'API, ex. Automator — voir config.apiKey).
+  app.use("/api/crm", requireSessionOrApiKey, crmRouter);
   // Envoi d'email (Resend) : admin uniquement, pas de webhook public à gérer ici.
   app.use("/api/email", requireAuth, emailRouter);
   // Mixte : /messages et /call exigent une session admin (déclaré route par
