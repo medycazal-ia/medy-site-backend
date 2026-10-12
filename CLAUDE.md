@@ -136,6 +136,30 @@ he hadn't given a destination URL yet and the name he said ("Victor")
 didn't resolve to anything guessable from context — he gave the real
 URL a couple of messages later and it was swapped in.
 
+**"Medy facilite l'optique" card (6th "Mes créations" card)**: links to
+`https://www.facilog.site` — FACILOG, a real optician/audioprosthetist
+software product, published by "La Maison du CREL." Worth noting: a
+`WebSearch` while sourcing this card turned up GitHub PRs from a
+`medycazal-ia/sas-optique-audition` repo — i.e. the "SAS métier
+optique & audition" proposal documents written earlier in this same
+session (see the compiled `DOSSIER-COMPLET.md` delivered to Medy) are
+not just theoretical: that project got created and FACILOG is what it
+became. `public-site/opticien-agent.jpg` is a real edited character
+generation (ElevenLabs quota was available again), same
+reference-upload + `creative_edit_image` flow as the other agent
+cards, prompted to have the character hold up an oversized pair of
+round orange glasses (matching his own) — reads as "optician showing a
+client new glasses." **Crop box differs from the other cards**: this
+generation's pose extended further right (the held glasses reached
+past the usual `crop((380,0,900,720))` window and got cut off
+mid-lens on the first attempt), so this one uses
+`crop((330,0,1000,720))` → resize to 720px width (not 640px) → JPEG
+quality=88, landing at 720×773 instead of the usual 640×886. This is
+fine — the card's `<img>` uses `height:100%;width:auto;object-fit:contain`,
+so any aspect ratio displays correctly — but don't copy the 640×886
+crop box blindly for a future agent image without checking the actual
+generation first; crop to what's really there.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
