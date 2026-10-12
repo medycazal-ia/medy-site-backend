@@ -160,6 +160,26 @@ so any aspect ratio displays correctly — but don't copy the 640×886
 crop box blindly for a future agent image without checking the actual
 generation first; crop to what's really there.
 
+**"Medy règne sur le cloud" card (7th "Mes créations" card)**: links
+to `https://www.reine-cloud.fr`. This is Medy's own hosting/cloud/AI
+brand — see `/home/user/reine-cloud.fr` (repo `medycazal-ia/reine-cloud.fr`,
+attached to this session separately from `medy-site-backend`; read its
+own `CLAUDE.md` before touching anything there, it has its own strict
+rules — e.g. never commit secrets, independent hosting on LWS, not
+Render). The brand concept is a pun: "reine-claude" (the greengage
+plum, a common French fruit name) / "reine" (queen → sovereignty) /
+"cloud" — tagline "Hébergement · Cloud · IA · Souveraineté," French
+servers emphasized. `public-site/reinecloud-agent.jpg` is a real
+edited character generation: the usual reference-upload +
+`creative_edit_image` flow, prompted to add a small gold crown on his
+head and a small white cloud held in one hand — directly visualizes
+the "reine" (crown) + "cloud" pun. This generation's pose matched the
+default framing, so the standard `crop((380,0,900,720))` → 640px width
+→ quality=88 pipeline worked without adjustment, landing at the usual
+640×886. Badge color (`#fdf6e3`/`#8a6d1f`, gold-toned) was picked to
+echo reine-cloud's real brand gold (`#D9A93A` per its own CLAUDE.md)
+without reusing medy.site's existing amber/orange badges exactly.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
