@@ -22,8 +22,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   by `public-site/index.html` on load to render the profile card) / `PUT
   /api/profile` (admin-only), `POST /api/signups` (public — the header
   "S'inscrire" form on `public-site/index.html` calls this directly),
-  `GET /api/projects` (public but not yet called by that page — the
-  portfolio cards are still hard-coded, see "Not yet done"), `/api/crm/*`
+  `GET /api/projects` (public; not called by `public-site/index.html`
+  itself, which still renders its portfolio cards as hard-coded HTML —
+  but it **is** the live data source for reine-cloud.fr's "agents sur
+  mesure" page, see "API publique des projets" below), `/api/crm/*`
   (admin-only, Airtable-backed CRM), `/api/twilio/*` and `/api/email/send`
   (admin-only sends + Twilio's public signature-verified webhooks).
 
@@ -797,22 +799,57 @@ wired up — not needed yet).
   error (500 naming `RESEND_API_KEY`) — no real send, no `RESEND_API_KEY`
   in this environment.
 
-## Not yet done
+## API publique des projets (`GET /api/projects`) — source pour reine-cloud.fr
 
-- `medy.site` custom domain is attached in Render (Custom Domains: both
-  `medy.site` and `www.medy.site` verified, certificate issued, DNS zone
-  at the registrar has the matching `A`/`CNAME` records) — the profile
-  data is real and served from this backend (see "Profil public"
-  below). Portfolio cards ("Mes créations") are still the hard-coded
-  markup from the Canva extraction, not yet reading `GET /api/projects`
-  — see next bullet.
-- `public-site/index.html` still doesn't call `GET /api/projects` — the
-  portfolio cards ("Mes créations") are still the hard-coded markup
-  extracted from Canva Code, not yet wired to this repo's own API
-  (unlike the profile card and the signup form, which are both wired —
-  see "Profil public" and "Inscriptions" below). Low priority: the page
-  works fine as-is; wiring it up mainly matters if Medy wants to
-  add/edit portfolio projects without a code change.
+`DEFAULT_PROJECTS` in `server/src/db.ts` (used whenever
+`server/data/projects.json` doesn't exist — i.e. on every fresh Render
+boot, same ephemeral-data situation as everywhere else in this file) now
+mirrors the 12 non-pinned "Mes créations" cards on `public-site/index.html`
+(everything except the "accès privé"/boîte secrète card, which stays
+medy.site-only — not representative of "an agent delivered to a client",
+and personal rather than public-facing). Each entry carries `image`
+(an **absolute** `https://medy.site/…-agent.jpg` URL — relative paths
+would break for any consumer outside this domain), `badgeColor` and
+`badgeTextColor` (hex strings, matching each card's badge exactly).
+`cors()` is mounted with no origin restriction (`server/src/api/app.ts`),
+so `GET /api/projects` is fetchable cross-origin from anywhere, no extra
+config needed.
+
+**This is now the data source for reine-cloud.fr's "agents sur mesure"
+showcase page** (`medycazal-ia/reine-cloud.fr`, `site/agents-sur-mesure.html`
+— see that repo's own CLAUDE.md for the page itself). That page does a
+plain client-side `fetch("https://medy.site/api/projects")` on load and
+renders whatever comes back — there is **no push/sync step, no Automedy
+workflow, no cron job**. This was a deliberate choice over wiring Automedy
+to "push" cards into reine-cloud.fr: that site is 100% static (hosted on
+LWS cPanel, no backend, no API of its own to receive pushed data — see its
+CLAUDE.md), so there was nothing for an automation workflow to call that
+wouldn't itself need building from scratch. A live client-side fetch gets
+the same "stays in sync automatically" outcome Medy asked for, with zero
+moving parts, zero credentials, and zero staleness — the showcase page is
+never more than one page-load behind medy.site.
+
+**The real, honest limitation of this approach**: `public-site/index.html`'s
+own carousel still renders from hard-coded HTML, not from this API (see
+below) — so **adding a new "Mes créations" card today means updating two
+places**: the hard-coded card markup in `public-site/index.html` (for
+medy.site's own carousel, which also has per-card decorative extras this
+simple schema can't represent — e.g. the tiers-payant pen/pad or audit
+headphones/mic overlays) **and** a matching entry in `DEFAULT_PROJECTS`
+(for `GET /api/projects`, and therefore reine-cloud.fr). This isn't fully
+automatic for *future* cards — it's a documented convention, not a
+guarantee — but keeping the two in sync is now a priority every time this
+project is worked on (not just a trailing bullet): check this section
+whenever a card changes.
+
+If Medy ever wants a literal Automedy piece on top of this (there's a
+genuine use for one, just not for the syncing itself): a scheduled
+workflow that polls `GET /api/projects`, diffs the card count/ids against
+its last run, and pings Slack/email when something changed — monitoring
+and notification being what Automedy is actually good at, versus pushing
+files to a site that has nowhere to receive them.
+
+## Not yet done
 - `AIRTABLE_API_KEY` is set and working in production — `/api/crm/*` is
   live. Two gotchas hit while setting it up, worth knowing if `/api/crm/*`
   ever 401s/403s/404s again after a key rotation: (1) Airtable's token

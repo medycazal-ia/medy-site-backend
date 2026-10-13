@@ -49,11 +49,16 @@ afterAll(() => {
 });
 
 describe("projects", () => {
-  it("expose le projet tierspayant.site par défaut, publiquement", async () => {
+  it("expose les projets par défaut, publiquement, avec image et couleurs de badge", async () => {
     const res = await fetch(`${baseUrl}/api/projects`);
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.projects.some((p: { title: string }) => p.title === "tierspayant.site")).toBe(true);
+    expect(body.projects.length).toBeGreaterThanOrEqual(11);
+    const tiersPayant = body.projects.find((p: { id: string }) => p.id === "tierspayant-site");
+    expect(tiersPayant).toBeDefined();
+    expect(tiersPayant.title).toBe("Medy fait ton tiers payant");
+    expect(tiersPayant.image).toBe("https://medy.site/tierspayant-agent.jpg");
+    expect(tiersPayant.badgeColor).toBe("#dcfce7");
   });
 
   it("masque les projets en brouillon de la liste publique", async () => {

@@ -17,6 +17,9 @@ export interface Project {
   url: string;
   status: ProjectStatus;
   badgeLabel: string;
+  image?: string;
+  badgeColor?: string;
+  badgeTextColor?: string;
   order: number;
   createdAt: string;
   updatedAt: string;

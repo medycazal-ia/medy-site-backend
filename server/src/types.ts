@@ -19,6 +19,11 @@ export interface Project {
   status: ProjectStatus;
   /** Ex: "Démo en ligne" — affiché en badge sur la vignette quand status = "live". */
   badgeLabel: string;
+  /** URL absolue de l'illustration (ex: "https://medy.site/automedy-agent.jpg"), pour les consommateurs externes (reine-cloud.fr) qui n'ont pas accès aux fichiers statiques de medy.site. */
+  image?: string;
+  /** Couleurs du badge (fond / texte), ex: "#ccfbf1" / "#0f766e". Absentes = couleurs par défaut du consommateur. */
+  badgeColor?: string;
+  badgeTextColor?: string;
   /** Ordre d'affichage dans la grille "Mes créations" (croissant). */
   order: number;
   createdAt: string;
