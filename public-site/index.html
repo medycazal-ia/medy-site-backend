@@ -124,7 +124,8 @@
 .mc-dot:hover{background:#dbe4ff;}
 .mc-dot.active{background:#22c55e;color:#fff;transform:scale(1.12);}
 .mc-carousel-counter{font-size:12px;font-weight:700;color:#475569;white-space:nowrap;}
-.mc-carousel-hint{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#94a3b8;margin-left:auto;white-space:nowrap;}
+.mc-carousel-hint{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#94a3b8;margin-left:auto;white-space:nowrap;background:none;border:none;font-family:inherit;cursor:pointer;padding:4px 2px;}
+.mc-carousel-hint:hover{color:#2563eb;}
 @media (max-width:560px){.mc-carousel-hint{display:none;}}
 
 .cv-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;z-index:100;}
@@ -342,10 +343,10 @@
       </button>
       <div class="mc-carousel-dots" id="mc-carousel-dots"></div>
       <div class="mc-carousel-counter" id="mc-carousel-counter">1 / 11</div>
-      <div class="mc-carousel-hint">
+      <button type="button" class="mc-carousel-hint" id="mc-carousel-hint" aria-label="Faire glisser vers la création suivante">
        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
        Faites glisser pour voir plus
-      </div>
+      </button>
      </div>
     </div>
    </div>
@@ -522,6 +523,7 @@
       const toggleBtn=document.getElementById("mc-carousel-toggle");
       const pauseIcon=document.getElementById("mc-pause-icon");
       const playIcon=document.getElementById("mc-play-icon");
+      const hintBtn=document.getElementById("mc-carousel-hint");
       if(!viewport || !track || !dotsBox || !counter || !toggleBtn) return;
 
       const cards=[...track.querySelectorAll(".mc-card")];
@@ -618,6 +620,13 @@
           if(!autoplayPaused) pauseAutoplay();
         },{passive:true});
       });
+
+      if(hintBtn){
+        hintBtn.addEventListener("click",()=>{
+          pauseAutoplay();
+          advance();
+        });
+      }
 
       setActive(0);
       startAutoplay();
