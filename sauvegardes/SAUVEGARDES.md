@@ -12,6 +12,23 @@ Pour rouvrir une version : `git checkout $(git log --format=%H -1
 
 ---
 
+## v1.1 — 2026-10-13
+
+- **`GET /api/projects` devient la source publique des cartes "Mes
+  créations"** : les 12 cartes (hors "accès privé") ont maintenant une
+  entrée dans `DEFAULT_PROJECTS` (`server/src/db.ts`) avec `image`
+  (URL absolue), `badgeColor`/`badgeTextColor`, en plus d'être codées en
+  dur sur `public-site/index.html`. CORS déjà ouvert (`cors()` sans
+  restriction), donc l'API est utilisable depuis n'importe quel autre
+  site. Détail et limite connue (deux endroits à tenir à jour tant que
+  `public-site/index.html` ne lit pas lui-même cette API) dans
+  `CLAUDE.md`, section « API publique des projets ».
+- Cette API alimente directement la nouvelle page "agents sur mesure" de
+  `reine-cloud.fr` (dépôt séparé) — voir son propre journal de version.
+
+**Point d'attention pour une restauration** : identique à la v1.0,
+rien à restaurer côté `server/data/*.json`.
+
 ## v1.0 — 2026-10-13
 
 - Mise en place de ce système de sauvegardes versionnées lui-même
