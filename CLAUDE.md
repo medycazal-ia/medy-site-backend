@@ -225,6 +225,57 @@ Puppeteer at 1280px, 800px and 390px widths, checking
 content). Don't drop that `width:100%` if `.mc-layout`'s flex-direction
 or align-items ever change.
 
+**8th–10th carousel cards (Automedy, Club Culture Pétanque,
+MontagePourTous)**: added right after the carousel was built — first real
+proof that "every future card just goes in the track, no JS changes"
+actually holds. All three are separate GitHub repos
+(`medycazal-ia/automator`, `medycazal-ia/cjub-culture-petanque`,
+`medycazal-ia/montagepourtous`), attached and cloned read-only the same
+way `reine-cloud.fr` was, purely to read each project's own README before
+picking an accessory — none of their code was touched.
+
+- **"Medy automatise tout"** links to
+  `https://automator-medy.osc-fr1.scalingo.io` (Automedy, a self-hosted
+  automation engine like Make/Zapier — trigger + steps, visual canvas).
+  `public-site/automedy-agent.jpg`: the character holds up a small dark
+  tablet showing a glowing 3-node triangle diagram (two teal `#0F766E`
+  circles connected to one amber `#F59E0B` circle) — this isn't an
+  arbitrary "automation" icon, it's a deliberate match of Automedy's own
+  logo (`brand/logo.svg` in that repo is exactly this teal/amber 3-node
+  shape, styled as an "A"). Badge color (`#ccfbf1`/`#0f766e`) reuses that
+  same teal for the same reason. Held object ran wider than the default
+  crop box again (same failure mode as the opticien card) — confirmed via
+  a wide test crop before committing to it — so this one also uses
+  `crop((380,0,960,720))` → 640px width (not the 900-px-right-edge
+  default), landing at 640×794.
+- **"Medy joue la pétanque"** links to
+  `https://club-cuture-petanque.reine-cloud.fr` — note the domain is
+  spelled exactly as Medy gave it (`cuture`, missing the "l" in
+  "culture"), not "corrected," since it's presumably the actual live
+  subdomain and silently changing it would risk a dead link. The
+  underlying site (Club Culture Pétanque, La Crique/Trinité, Martinique)
+  is its own repo, name-typo'd the other way (`cjub-culture-petanque`).
+  `public-site/petanque-agent.jpg`: character holding a shiny chrome
+  pétanque boule with a small red cochonnet at his feet — standard
+  `crop((380,0,900,720))` → 640px pipeline, no adjustment needed.
+- **"Medy fait le montage"** links to
+  `https://montagepourtous.reine-cloud.fr` (MontagePourTous: free
+  browser-based photo/video/sound editing with a cinema-themed feature
+  set — title cards, countdown, film-strip effects). Deliberately **not**
+  a clapperboard, even though the product is cinema-themed, because
+  `studio-agent.jpg` on the "Medy fait du cinéma" card already uses one —
+  a second clapperboard card would read as a duplicate/mistake. Used a
+  film reel instead (`public-site/montage-agent.jpg`), which also ran
+  wider than default (`crop((380,0,970,720))` → 640px width, landing at
+  640×781) — same "check the actual pose, don't copy the crop box
+  blindly" lesson as opticien/automedy.
+
+All three reused the same ElevenLabs flow/session (one `creative_create_flow`
+call, reference image uploaded once from `reinecloud-agent.jpg`,
+`creative_edit_image` called three times with the same `connect_from`
+node) instead of re-uploading a reference per card — cheaper and keeps
+the base character pixel-identical across edits.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
