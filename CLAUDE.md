@@ -38,6 +38,45 @@ Live deployment: pushed to Render (`render.yaml` at repo root is the
 blueprint) — custom domain (`medy.site`) not yet attached in the Render
 dashboard, see README's "Site public medy.site".
 
+## Sauvegardes versionnées (demande de Medy, 2026-10-13)
+
+Adapté du système équivalent dans `whaoo-med`, mais simplifié : ce dépôt
+est petit (quelques Mo, pas de vidéos ni de base de données), donc pas
+besoin de découper les archives en volumes ni de fractionner
+l'historique Git. Chaque session de travail (ou quand Medy le demande)
+produit une nouvelle version, à la suite de la v1.0 du 2026-10-13 : v1.1,
+v1.2, etc. (lire `sauvegardes/SAUVEGARDES.md` pour connaître la
+dernière).
+
+Une fois le travail de la session committé et poussé :
+
+1. Ajouter en tête des versions de `sauvegardes/SAUVEGARDES.md`
+   (au-dessus de la précédente) l'entrée `## vX.Y — AAAA-MM-JJ` (version
+   précédente + 0.1) qui résume les changements de la session.
+2. Committer avec le message `Sauvegarde vX.Y — AAAA-MM-JJ` et pousser :
+   ce commit est le point de restauration (pousser un tag est refusé
+   depuis les sessions Claude).
+3. Lancer `scripts/sauvegarde.sh` : il lit la version dans le journal et
+   produit deux fichiers dans `../sauvegardes-medy-site-backend/`
+   (hors dépôt) — `medy-site-backend-vX.Y-AAAA-MM-JJ.zip` (code complet
+   et fonctionnel à cette version, notice de restauration, journal) et
+   `medy-site-backend-vX.Y-AAAA-MM-JJ-historique-git.bundle` (tout
+   l'historique Git, en un seul fichier).
+4. Envoyer les deux fichiers à Medy avec `SendUserFile`.
+
+Pour rouvrir une version : `git checkout $(git log --format=%H -1
+--grep='^Sauvegarde vX.Y ')`, ou demander à Medy le zip correspondant et
+suivre `sauvegardes/RESTAURATION.md`.
+
+**Il n'y a jamais de données « réelles » à sauvegarder côté serveur** :
+`server/data/*.json` (profil, inscriptions, projets, hash du code de la
+boîte secrète) est `.gitignore`d et de toute façon effacé à chaque cycle
+de veille/réveil du plan gratuit Render (voir la section Architecture,
+« Known limitation »). Les sauvegardes de ce projet ne portent donc que
+sur le code — contrairement à whaoo, il n'y a pas de section « sauvegarde
+du serveur/base de données » à prévoir ici tant que ce plan Render reste
+en l'état.
+
 ## Public site host routing
 
 `server/src/api/app.ts`: a middleware early in the chain checks
