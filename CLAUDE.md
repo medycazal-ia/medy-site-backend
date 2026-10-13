@@ -307,6 +307,37 @@ than folding it into the whaoo card's description.
   `public/coloriage/manifest.webmanifest`), distinct from whaoo's own
   green so the two cards don't visually read as one product split in two.
 
+**13th carousel card — "Medy scanne tes documents"**: links to
+`https://scan.reine-cloud.fr`. Took real back-and-forth to pin down —
+worth documenting the dead ends so a future session doesn't repeat them.
+Medy's first ask ("l'outil scan") was assumed to be whaoo's in-app
+receipt scanner (`src/components/scanner-ticket.tsx`, Claude Vision
+reading grocery receipts — see `whaoo-med`'s own CLAUDE.md/code), and a
+character image for *that* was generated (phone photographing a grocery
+receipt) before Medy corrected: "non il s'agit de celui qui scan les
+paseports etc aussi avec un lien sur smartphone" — a completely
+different, ID-document scanning tool. That receipt-scanner generation
+was discarded unused; don't go looking for it. The real tool turned out
+to be the `pieceIdentite` field ("carte d'identité recto et verso, ou
+passeport") in FACILOG's client document-deposit form
+(`automator/examples/facilog-depot-client.json`, an Automedy `form`
+trigger — see the Automedy card entry above for how `/depot/<id>` +
+QR/link-on-smartphone deposit portals work) — Medy confirmed it also
+exists **inside** FACILOG but was **also built as a separate, standalone
+tool**. That standalone tool has no repo in this GitHub account (checked
+all 14 repos) and isn't reachable by `WebFetch` (403, same as
+`reine-cloud.fr` itself — this sandbox's proxy or the site's own
+bot-protection blocks it, not a real outage) — Medy gave the URL
+directly: `scan.reine-cloud.fr`. `public-site/scan-agent.jpg`: character
+holding a smartphone (screen showing green scan-frame corner brackets)
+angled over a small navy passport booklet — standard
+`crop((380,0,900,720))` pipeline, no adjustment needed. Badge color
+(`#e0e7ff`/`#4338ca`, indigo) is a fresh, previously-unused color on this
+page, picked for an identity-verification/security feel rather than
+echoing any specific brand (unlike the reine-cloud/whaoo/coloriage
+cards, nothing about this standalone tool's own visual identity is
+known — its page couldn't be read).
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
