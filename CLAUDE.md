@@ -276,6 +276,37 @@ call, reference image uploaded once from `reinecloud-agent.jpg`,
 node) instead of re-uploading a reference per card — cheaper and keeps
 the base character pixel-identical across edits.
 
+**11th–12th carousel cards (whaoo, Coloriage des outre-mers)**: both from
+`medycazal-ia/whaoo-med` (attached/cloned read-only, same pattern as the
+other card research), Medy's shopping-list-and-budget PWA at whaoo.site
+— but split into **two separate cards** per Medy's explicit request
+("la partie coloriage aussi que tu feras en une carte aussi et prendra
+sa partie indépendante"), because the coloring feature is a self-contained
+PWA (own `manifest.webmanifest`, own `start_url`/`scope` of `/coloriage`,
+its own icon set, installable on its own) living at a *sub-path* of the
+same app rather than a separate product — worth a card of its own rather
+than folding it into the whaoo card's description.
+
+- **"Medy fait les courses"** links to `https://whaoo.site` itself (the
+  voice-noted grocery list / monthly budget / savings-pot app).
+  `public-site/whaoo-agent.jpg`: character holding a tiny shopping cart
+  with a baguette and vegetables poking out — standard
+  `crop((380,0,900,720))` pipeline, no adjustment needed. Badge color
+  (`#dcefe4`/`#264a41`) reuses whaoo's own PWA theme color (`#264a41`,
+  `public/manifest.json`), same principle as the reine-cloud gold badge.
+- **"Medy fait colorier les outre-mers"** links to
+  `https://whaoo.site/coloriage` specifically (not the whaoo homepage) —
+  a digital coloring-book PWA (132 drawings across 6 French overseas
+  territories, offline, stylet support, no account, nothing sent to the
+  server; part of La Maison du Crel's "Outre-mer" collection, which also
+  includes separate physical KDP books kept in another private repo,
+  `outre-mer-livres` — not touched here, out of scope). `public-site/
+  coloriage-agent.jpg`: character holding a small fan of 4–5 colored
+  pencils — same default crop pipeline. Badge color (`#fef3c7`/`#92650a`,
+  warm yellow) echoes the coloring app's own theme color (`#f5c428`,
+  `public/coloriage/manifest.webmanifest`), distinct from whaoo's own
+  green so the two cards don't visually read as one product split in two.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
