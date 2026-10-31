@@ -12,6 +12,29 @@ Pour rouvrir une version : `git checkout $(git log --format=%H -1
 
 ---
 
+## v1.2 — 2026-10-31
+
+- **Carte CV + page `cv.html`** : deux CV (profil polyvalent, et agent de
+  maîtrise optique & lunetterie) hébergés sur bold.pro, présentés avec
+  aperçu sur une nouvelle page publique `public-site/cv.html`, elle-même
+  ajoutée comme 14e carte du carrousel "Mes créations" (`cv-agent.jpg`)
+  et comme 14e entrée de `DEFAULT_PROJECTS`.
+- **`/cv` fonctionne comme URL courte** vers `cv.html` : `express.static`
+  prend maintenant `{ extensions: ["html"] }` (`server/src/api/app.ts`),
+  nécessaire pour qu'un QR code imprimé pointe sur une adresse propre
+  plutôt que de servir la page d'accueil par erreur (comportement
+  précédent, silencieux). Effet de bord gardé volontairement : `/boite-
+  secrete` fonctionne aussi comme raccourci désormais.
+- **QR code** (`public-site/qr-cv.png`) vers `https://medy.site/cv`,
+  affiché en bas de `cv.html` et envoyé à Medy en fichier à part pour
+  impression. Décodé et vérifié avant envoi.
+- **Bouton "Voir mon CV"** du profil : garde son modal existant (bio +
+  vidéo de présentation, inchangés) mais affiche maintenant en premier
+  les deux liens CV directs (mêmes liens que `cv.html`).
+
+**Point d'attention pour une restauration** : identique aux versions
+précédentes, rien à restaurer côté `server/data/*.json`.
+
 ## v1.1 — 2026-10-13
 
 - **`GET /api/projects` devient la source publique des cartes "Mes
