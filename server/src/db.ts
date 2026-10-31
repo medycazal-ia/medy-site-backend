@@ -235,6 +235,20 @@ const DEFAULT_PROJECTS: Project[] = [
     createdAt: "2026-10-13T00:00:00.000Z",
     updatedAt: "2026-10-13T00:00:00.000Z",
   },
+  {
+    id: "cv",
+    title: "Medy montre son CV",
+    description: "Deux versions : un profil polyvalent, et un profil agent de maîtrise en optique et lunetterie.",
+    url: "https://medy.site/cv",
+    status: "live",
+    badgeLabel: "CV",
+    image: "https://medy.site/cv-agent.jpg",
+    badgeColor: "#dbeafe",
+    badgeTextColor: "#1d4ed8",
+    order: 13,
+    createdAt: "2026-10-31T00:00:00.000Z",
+    updatedAt: "2026-10-31T00:00:00.000Z",
+  },
 ];
 
 class ProjectStore {

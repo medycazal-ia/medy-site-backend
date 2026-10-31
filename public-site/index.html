@@ -138,6 +138,9 @@
 .cv-section-title{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6d28d9;margin:22px 0 8px;}
 .cv-section-title:first-child{margin-top:0;}
 .cv-text{font-size:13.5px;line-height:1.6;color:#475569;}
+.cv-links{display:flex;gap:10px;flex-wrap:wrap;}
+.cv-link-btn{display:inline-flex;align-items:center;gap:7px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;padding:9px 14px;font-size:13px;font-weight:700;text-decoration:none;transition:background .15s ease;}
+.cv-link-btn:hover{background:#dbeafe;}
 .cv-video-frame{position:relative;margin-top:10px;border-radius:16px;overflow:hidden;background:linear-gradient(150deg,#172554 0%,#3730a3 100%);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;width:100%;padding:0;}
 .cv-video-play{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;color:#fff;}
 .cv-video-caption{position:absolute;left:16px;right:16px;bottom:12px;color:#e0e7ff;font-size:12px;font-weight:600;text-align:left;}
@@ -348,6 +351,20 @@
       </div>
      </div>
     </a>
+    <a class="mc-card" href="cv.html">
+     <div class="mc-thumb" style="background:linear-gradient(150deg,#fdf6e9 0%,#f0e6d2 100%);display:flex;align-items:flex-end;justify-content:center;">
+      <div class="mc-live-badge"><span class="mc-live-dot"></span> En ligne</div>
+      <img src="cv-agent.jpg" alt="Personnage animé de Medy, chauve avec des lunettes rondes oranges, tenant une feuille de CV" style="height:100%;width:auto;object-fit:contain;" loading="lazy">
+     </div>
+     <div class="mc-body">
+      <span class="mc-soon-badge" style="background:#dbeafe;color:#1d4ed8;">CV</span>
+      <div class="mc-card-title">Medy montre son CV</div>
+      <div class="mc-desc">Deux versions : un profil polyvalent, et un profil agent de maîtrise en optique et lunetterie.</div>
+      <div class="mc-open">Découvrir
+       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </div>
+     </div>
+    </a>
       </div>
      </div>
      <div class="mc-carousel-controls">
@@ -356,7 +373,7 @@
        <svg id="mc-play-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:none;"><polygon points="6 4 20 12 6 20"></polygon></svg>
       </button>
       <div class="mc-carousel-dots" id="mc-carousel-dots"></div>
-      <div class="mc-carousel-counter" id="mc-carousel-counter">1 / 12</div>
+      <div class="mc-carousel-counter" id="mc-carousel-counter">1 / 13</div>
       <button type="button" class="mc-carousel-hint" id="mc-carousel-hint" aria-label="Faire glisser vers la création suivante">
        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
        Faites glisser pour voir plus
@@ -379,6 +396,16 @@
      </div>
     </div>
     <div class="cv-modal-body">
+     <div class="cv-section-title">Mon CV</div>
+     <div class="cv-links">
+      <a class="cv-link-btn" href="https://bold.pro/my/medyharry-cazal" target="_blank" rel="noopener noreferrer">
+       <i data-lucide="user" class="w-4 h-4" aria-hidden="true"></i> CV polyvalent
+      </a>
+      <a class="cv-link-btn" href="https://bold.pro/my/medyharrymvo" target="_blank" rel="noopener noreferrer">
+       <i data-lucide="glasses" class="w-4 h-4" aria-hidden="true"></i> CV optique &amp; lunetterie
+      </a>
+     </div>
+
      <div class="cv-section-title">À propos</div>
      <p id="cv-modal-bio" class="cv-text"></p>
 

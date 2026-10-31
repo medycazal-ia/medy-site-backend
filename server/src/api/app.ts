@@ -53,7 +53,7 @@ export function createApp() {
   // atteindre ce service (utile pour vérifier le site avant que medy.site
   // ne soit branché en DNS, par ex. via l'URL Render brute).
   if (fs.existsSync(publicSiteDir)) {
-    app.use("/apercu-site-public", express.static(publicSiteDir));
+    app.use("/apercu-site-public", express.static(publicSiteDir, { extensions: ["html"] }));
   }
 
   // Un seul service, deux sites distincts selon le domaine de la requête :
@@ -67,7 +67,7 @@ export function createApp() {
     const isPublicSiteHost =
       host === config.publicSite.host || host === `www.${config.publicSite.host}`;
     if (isPublicSiteHost && fs.existsSync(publicSiteDir)) {
-      return express.static(publicSiteDir)(req, res, () => {
+      return express.static(publicSiteDir, { extensions: ["html"] })(req, res, () => {
         res.sendFile(path.join(publicSiteDir, "index.html"));
       });
     }

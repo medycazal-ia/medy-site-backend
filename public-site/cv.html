@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon CV</title>
+  <meta name="description" content="Deux versions de mon CV : un profil polyvalent, et un profil agent de maîtrise en optique &amp; lunetterie.">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#172554; --blue:#2563eb; --violet:#6d28d9; --line:#dbe4f4; --card:rgba(255,255,255,.91); }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:"Work Sans",sans-serif; color:var(--ink); min-height:100vh; background:linear-gradient(135deg,#dbeafe 0%,#ede9fe 55%,#e0e7ff 100%); }
+    .glass-card { background:var(--card); border:1px solid rgba(191,219,254,.72); box-shadow:0 18px 52px rgba(49,46,129,.11); }
+    a:focus-visible { outline:3px solid rgba(99,102,241,.48); outline-offset:3px; }
+
+    .cv-grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:22px;}
+    @media (max-width:720px){.cv-grid{grid-template-columns:1fr;}}
+    .cv-card{background:rgba(255,255,255,.95);border:1px solid #dbe4f4;border-radius:24px;padding:30px 26px;display:flex;flex-direction:column;gap:14px;text-decoration:none;color:inherit;box-shadow:0 22px 44px -24px rgba(23,37,84,.25);transition:transform .15s ease,box-shadow .15s ease;}
+    .cv-card:hover{transform:translateY(-4px);box-shadow:0 28px 52px -20px rgba(37,99,235,.3);}
+    .cv-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .cv-badge{display:inline-flex;align-self:flex-start;align-items:center;border-radius:999px;padding:4px 12px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+    .cv-name{font-size:19px;font-weight:800;color:#172554;}
+    .cv-desc{font-size:13.5px;color:#64748b;line-height:1.55;flex:1;}
+    .cv-open{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#2563eb;}
+  </style>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto px-4 sm:px-8 py-10">
+
+    <a href="index.html" class="inline-flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-900 mb-8">
+      <i data-lucide="arrow-left" class="w-4 h-4" aria-hidden="true"></i> Retour au site
+    </a>
+
+    <section class="glass-card rounded-3xl p-8 sm:p-10 max-w-3xl mx-auto">
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Mon CV</h1>
+      <p class="text-sm text-slate-600 mb-8 max-w-xl">Deux versions selon ce qui vous intéresse : un profil généraliste, ou un profil plus spécifiquement tourné vers l'optique et la lunetterie.</p>
+
+      <div class="cv-grid">
+        <a class="cv-card" href="https://bold.pro/my/medyharry-cazal" target="_blank" rel="noopener noreferrer">
+          <div class="cv-icon" style="background:#dbeafe;color:#1d4ed8;"><i data-lucide="user" class="w-6 h-6" aria-hidden="true"></i></div>
+          <span class="cv-badge" style="background:#dbeafe;color:#1d4ed8;">Profil polyvalent</span>
+          <div class="cv-name">CV généraliste</div>
+          <div class="cv-desc">Consultant digital &amp; IA : sites web, automatisation, agents IA, communication — l'ensemble de mon parcours.</div>
+          <div class="cv-open">Voir le CV
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </div>
+        </a>
+        <a class="cv-card" href="https://bold.pro/my/medyharrymvo" target="_blank" rel="noopener noreferrer">
+          <div class="cv-icon" style="background:#cffafe;color:#0e7490;"><i data-lucide="glasses" class="w-6 h-6" aria-hidden="true"></i></div>
+          <span class="cv-badge" style="background:#cffafe;color:#0e7490;">Optique &amp; lunetterie</span>
+          <div class="cv-name">CV agent de maîtrise</div>
+          <div class="cv-desc">Profil orienté opticien/lunetier : expérience terrain en magasin d'optique et sur les métiers de la filière.</div>
+          <div class="cv-open">Voir le CV
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-4 mt-8 pt-6 border-t border-slate-200">
+        <img src="qr-cv.png" alt="QR code vers medy.site/cv" class="w-20 h-20 rounded-xl border border-slate-200 bg-white p-1.5 flex-shrink-0">
+        <div>
+          <div class="text-sm font-bold text-slate-800">Partager cette page</div>
+          <div class="text-xs text-slate-500">Scannez pour ouvrir medy.site/cv sur un autre appareil.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

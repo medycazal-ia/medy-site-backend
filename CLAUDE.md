@@ -379,6 +379,75 @@ echoing any specific brand (unlike the reine-cloud/whaoo/coloriage
 cards, nothing about this standalone tool's own visual identity is
 known — its page couldn't be read).
 
+**14th carousel card — "Medy montre son CV" / `public-site/cv.html`
+(2026-10-31)**: links to a new internal page (`cv.html`, relative href
+like the "accès privé" card — **not** `target="_blank"`, same
+convention), not an external site. Medy has two separate CVs hosted on
+bold.pro, for two different audiences, and asked for both to be
+reachable with a preview each: `https://bold.pro/my/medyharry-cazal`
+("profil polyvalent" — general consultant/digital profile) and
+`https://bold.pro/my/medyharrymvo` ("agent de maîtrise optique &
+lunetterie" — the optician-trade-specific profile). `cv.html` reuses the
+exact visual language of `boite-secrete.html` (`.glass-card`, Work Sans,
+same blue/violet gradient) rather than inventing a new style, with two
+`.cv-card` tiles side by side (badge, title, one-line description, "Voir
+le CV" →), each opening its own bold.pro link in a new tab.
+`public-site/cv-agent.jpg`: character holding a one-page résumé sheet
+(portrait placeholder + text lines) — standard
+`crop((380,0,900,720))` pipeline, no adjustment needed. Badge color
+`#dbeafe`/`#1d4ed8` (blue) reused from the "Medy fait du cinéma" card's
+family on purpose — CV being a fairly neutral subject, no specific brand
+to echo here, unlike several other recent cards.
+
+**`/cv` as a clean URL (not just `/cv.html`)**: Medy asked for a QR code
+pointing at `medy.site/cv` specifically (no extension) — printable
+proof that "the page exists at this exact address," not something
+honored by just mentioning `cv.html` in prose. Before this, `express.
+static` had no `extensions` option, so `GET /cv` fell straight through
+to the public-site catch-all and silently served the **homepage**
+instead of 404ing or finding `cv.html` — a request for `/cv` and a
+request for `/this-page-does-not-exist` behaved identically. Fixed by
+adding `{ extensions: ["html"] }` to **both** `express.static` calls in
+`server/src/api/app.ts` (the public-site host-routed one and the
+`/apercu-site-public` preview mount) — purely additive: anything that
+previously resolved to an exact file still does, the only change is
+that a path with no file extension now also tries `<path>.html` before
+falling through to the homepage fallback. Side effect, left in on
+purpose rather than reverted: `/boite-secrete` now also works as a
+shorthand for `/boite-secrete.html` — no reason to special-case it out.
+Verified with curl against a local server: `/cv` → 200 with the CV
+page's `<title>`, `/cv.html` still → 200, and an actually-unknown path
+still falls back to the homepage as before.
+
+**QR code** (`public-site/qr-cv.png`, generated with Python's `qrcode`
+package, error correction level M, encoding the plain URL
+`https://medy.site/cv` — no analytics wrapper, no redirect service):
+embedded in a small "Partager cette page" block at the bottom of
+`cv.html` itself (so anyone already on the page, e.g. looking at it on
+Medy's own phone, can hand it to someone else to scan directly off the
+screen), and also sent to Medy as a standalone file to print/reuse
+elsewhere. **Decoded and verified** before shipping (`cv2.QRCodeDetector`
+round-tripped it back to the exact URL) — this sandbox's Python has no
+system `zbar` library, so `pyzbar` fails to import; `opencv-python-headless`'s
+built-in detector works without that dependency and was used instead.
+
+**"Voir mon CV" button now actually links to a CV**: the existing
+profile-card button of that name (`#cv-trigger`) only ever opened a bio/
+video-presentation modal (`#cv-modal-overlay` — name, job title, bio
+text, and a "Vidéo de présentation" player) that has nothing to do with
+an actual downloadable CV — a pre-existing mislabeling, not something
+broken by this change. Medy asked for the click to "open the respective
+links." Rather than repurpose the button and lose the video-pitch modal
+(a distinct, valuable feature with no other entry point in the UI), both
+were kept: the button still opens the same modal as before, which now
+also has a new "Mon CV" section at the very top — two `.cv-link-btn`
+pills ("CV polyvalent" / "CV optique & lunetterie"), each a direct
+`target="_blank"` link to its respective bold.pro URL, same two links as
+`cv.html`. Bio and video sections below are untouched. If a future
+request asks to skip the modal entirely and jump straight to `cv.html`,
+that's a one-line change (swap the button for a plain `<a href="cv.html">`)
+— not done here because nobody asked to lose the video modal.
+
 ### "Medy est outillé" card / "Ma boîte secrète" page
 
 The first "Mes créations" card (`public-site/index.html`) no longer
@@ -804,7 +873,7 @@ wired up — not needed yet).
 `DEFAULT_PROJECTS` in `server/src/db.ts` (used whenever
 `server/data/projects.json` doesn't exist — i.e. on every fresh Render
 boot, same ephemeral-data situation as everywhere else in this file) now
-mirrors the 12 non-pinned "Mes créations" cards on `public-site/index.html`
+mirrors the 13 non-pinned "Mes créations" cards on `public-site/index.html`
 (everything except the "accès privé"/boîte secrète card, which stays
 medy.site-only — not representative of "an agent delivered to a client",
 and personal rather than public-facing). Each entry carries `image`
